@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tituloMenuPreventaLabel"
+        style="@style/TituloActivity.Medium"
+        android:text="@string/title_activity_sincronizar" />
+
+    <RelativeLayout
+        android:id="@+id/sincronizarSpinnerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/pbHeaderProgress"
+            style="@android:style/Widget.ProgressBar.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" >
+        </ProgressBar>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/sincronizarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/syncImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/sincronizar_imageView"
+            android:src="@drawable/ic_sync_data" />
+
+        <TextView
+            android:id="@+id/syncDescripcionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/syncImageView"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="25dp"
+            android:text="@string/sincronizarDescripcion_label" />
+        <Button
+            android:id="@+id/sincronizarButton"
+            style="@style/Boton"
+            android:layout_alignParentBottom="true"
+            android:text="@string/sincronizar" />
+    </RelativeLayout>
+</LinearLayout>

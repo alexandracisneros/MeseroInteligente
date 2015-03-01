@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SmartWaiter</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_sincronizar">Sincronizar Datos</string>
+    <string name="sincronizar">Sincronizar</string>
+    <string name="sincronizar_imageView">Sincronizar</string>
+    <string name="sincronizarDescripcion_label">Se procederá a descargar la información necesaria para poder trabajar en la toma de pedidos. </string>
+    <string name="sincronizarCompleto_label">Data sincronizada correctamente.</string>
+
+    <!-- Sincronizacion Receiver -->
+    <string name="sync_notify_title_complete">Sincronización Completa</string>
+    <string name="sync_notify_text_complete">El proceso de sicronización se completó con exito.</string>
+    <string name="sync_notify_title_error">Error en sincronización</string>
+    <!-- Sincronizacion Receiver -->
+</resources>

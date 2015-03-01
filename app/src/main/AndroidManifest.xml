@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.idealsolution.smartwaiter" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- https://code.google.com/p/android/issues/detail?id=39592 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Holo" >
+        <provider
+            android:name=".provider.SmartWaiterProvider"
+            android:authorities="com.idealsolution.smartwaiter.provider"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".service.SincronizarService" >
+        </service>
+        <receiver android:name=".receiver.SincronizarReceiver">
+            <intent-filter>
+                <action android:name="com.idealsolution.smartwaiter.SYNC_DATA"></action>
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
