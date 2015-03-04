@@ -8,26 +8,28 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.*;
-import com.idealsolution.smartwaiter.io.RestConnector;
 import com.idealsolution.smartwaiter.io.RestUtil;
-import com.idealsolution.smartwaiter.ui.MainActivity;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Usuario on 21/12/2014.
- */
-public class SincronizarService extends IntentService {
+
+public class SincronizarService extends IntentService implements FutureCallback<JsonObject> {
     private static final String NAME = "SincronizarService";
     public static final String ACTION_SYNC_DATA="com.idealsolution.smartwaiter.SYNC_DATA";
-
+    private Exception miExcepcion=null;
+    private boolean exito=false;
+    private String mensaje = "";
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -47,76 +49,50 @@ public class SincronizarService extends IntentService {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         // if network is connected, download data
-        boolean exito = false;
-        String mensaje = "";
-        try{
-            if (networkInfo != null && networkInfo.isConnected()) {
-                Object requestObject = null;
-                String resultado;
-                String url= RestUtil.URLServer
-                        + "ObtenerDatosIniciales/?codCia=001&cadenaConexion=Initial%20Catalog=ABR";
-                RestConnector getConnector=RestUtil.obtainGetConnection(url);
-                requestObject=getConnector.doRequest(url);
-                if(requestObject instanceof String){
-                    // Only if the request was successful parse the returned
-                    // value otherwise re-throw the exception
-                    resultado = (String) requestObject;
-                    JSONObject jsonObjectResponse = (new JSONObject(resultado));
-                    exito=saveSyncDataToDB(jsonObjectResponse);
-                    Log.d(SmartWaiterContract.TAG,"Sincronizacion Correcta");
-                    exito=true;
 
-                }else if(requestObject instanceof Exception){
-                    throw new Exception((Exception)requestObject);
-                }
+            if (networkInfo != null && networkInfo.isConnected()) {
+                Ion.with(getApplicationContext())
+                    .load(RestUtil.URLServer
+                        + "ObtenerDatosIniciales/?codCia=001&cadenaConexion=Initial%20Catalog=ABR")
+                        .asJsonObject().setCallback(this);
             }
             else {
-                throw new Exception("Imposible conectarse a Internet.");
-
+                mensaje="Imposible conectarse a Internet.";
+                exito=false;
+                enviarNotificacion();
             }
-        }catch (Exception ex){
-            mensaje=ex.getMessage();
-            exito=false;
-        }
-        Intent broadcastIntent=new Intent();
-        broadcastIntent.setAction(SincronizarService.ACTION_SYNC_DATA);
-        broadcastIntent.putExtra("exito",exito);
-        broadcastIntent.putExtra("resultado",2);
-        broadcastIntent.putExtra("mensaje",mensaje);
-
-        sendOrderedBroadcast(broadcastIntent,null);
-
-
     }
 
-    private boolean saveSyncDataToDB(JSONObject jsonObjectResponse) throws Exception {
-        boolean exito=false;
-        JSONArray jsonArray;
-        jsonArray= jsonObjectResponse.getJSONArray("tablaFamilia");
+    private boolean saveSyncDataToDB(JsonObject jsonObjectResponse) throws Exception {
+
+        JsonArray jsonArray;
+        jsonArray= jsonObjectResponse.getAsJsonArray("tablaFamilia");
         exito=saveFamiliaData(jsonArray);
-        jsonArray=jsonObjectResponse.getJSONArray("tablaPrioridad");
+        jsonArray=jsonObjectResponse.getAsJsonArray("tablaPrioridad");
         exito=savePrioridadData(jsonArray);
-        jsonArray=jsonObjectResponse.getJSONArray("tablaMesa");
+        jsonArray=jsonObjectResponse.getAsJsonArray("tablaMesa");
         exito=saveMesaData(jsonArray);
-        jsonArray=jsonObjectResponse.getJSONArray("tablaCarta");
+        jsonArray=jsonObjectResponse.getAsJsonArray("tablaCarta");
         exito=saveCartaData(jsonArray);
-        jsonArray=jsonObjectResponse.getJSONArray("tablaCliente");
+        jsonArray=jsonObjectResponse.getAsJsonArray("tablaCliente");
         exito=saveClienteData(jsonArray);
-        jsonArray=jsonObjectResponse.getJSONArray("tablaArticuloPrecio");
+        jsonArray=jsonObjectResponse.getAsJsonArray("tablaArticuloPrecio");
         exito=saveArticuloPrecioData(jsonArray);
+
         return exito;
     }
 
-    private boolean saveFamiliaData(JSONArray jsonArrayFamilia) throws Exception {
-        if (jsonArrayFamilia.length() > 0) {
+    private boolean saveFamiliaData(JsonArray jsonArrayFamilia) throws Exception {
+
+         if (jsonArrayFamilia.size() > 0) {
             List<ContentValues> mValueList = new ArrayList<ContentValues>();
-            for (int i = 0; i < jsonArrayFamilia.length(); i++) {
-                JSONObject jsonObjItem = jsonArrayFamilia.getJSONObject(i);
+            for (int i = 0; i < jsonArrayFamilia.size(); i++) {
+                JsonObject jsonObjItem = jsonArrayFamilia.get(i).getAsJsonObject();
                 ContentValues mNewValues = new ContentValues();
                 mNewValues.put(Familia.CODIGO,
-                        jsonObjItem.getString("codelemento"));
+                        jsonObjItem.get("codelemento").getAsString());
                 mNewValues.put(Familia.DESCRIPCION,
-                        jsonObjItem.getString("descripcion"));
+                        jsonObjItem.get("descripcion").getAsString());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];
@@ -128,16 +104,18 @@ public class SincronizarService extends IntentService {
             throw new Exception("No hay 'Familias'.");
         }
     }
-    private boolean savePrioridadData(JSONArray jsonArrayPrioridad) throws Exception {
-        if (jsonArrayPrioridad.length() > 0) {
+    private boolean savePrioridadData(JsonArray jsonArrayPrioridad) throws Exception {
+
+
+        if (jsonArrayPrioridad.size() > 0) {
             List<ContentValues> mValueList = new ArrayList<ContentValues>();
-            for (int i = 0; i < jsonArrayPrioridad.length(); i++) {
-                JSONObject jsonObjItem = jsonArrayPrioridad.getJSONObject(i);
+            for (int i = 0; i < jsonArrayPrioridad.size(); i++) {
+                JsonObject jsonObjItem = jsonArrayPrioridad.get(i).getAsJsonObject();
                 ContentValues mNewValues = new ContentValues();
                 mNewValues.put(Prioridad.CODIGO,
-                        jsonObjItem.getString("codelemento"));
+                        jsonObjItem.get("codelemento").getAsString());
                 mNewValues.put(Prioridad.DESCRIPCION,
-                        jsonObjItem.getString("descripcion"));
+                        jsonObjItem.get("descripcion").getAsString());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];
@@ -149,28 +127,28 @@ public class SincronizarService extends IntentService {
             throw new Exception("No hay 'Prioridades'.");
         }
     }
-    private boolean saveMesaData(JSONArray jsonArrayMesa) throws Exception {
-        if (jsonArrayMesa.length() > 0) {
+    private boolean saveMesaData(JsonArray jsonArrayMesa) throws Exception {
+        if (jsonArrayMesa.size() > 0) {
             List<ContentValues> mValueList = new ArrayList<ContentValues>();
-            for (int i = 0; i < jsonArrayMesa.length(); i++) {
-                JSONObject jsonObjItem = jsonArrayMesa.getJSONObject(i);
+            for (int i = 0; i < jsonArrayMesa.size(); i++) {
+                JsonObject jsonObjItem = jsonArrayMesa.get(i).getAsJsonObject();
                 ContentValues mNewValues = new ContentValues();
                 mNewValues.put(MesaPiso.NRO_PISO,
-                        jsonObjItem.getInt("NROPISO"));
+                        jsonObjItem.get("NROPISO").getAsInt());
                 mNewValues.put(MesaPiso.COD_AMBIENTE,
-                        jsonObjItem.getInt("CAMBIENTE"));
+                        jsonObjItem.get("CAMBIENTE").getAsInt());
                 mNewValues.put(MesaPiso.DESC_AMBIENTE,
-                        jsonObjItem.getString("DAMBIENTE"));
+                        jsonObjItem.get("DAMBIENTE").getAsString());
                 mNewValues.put(MesaPiso.NRO_MESA,
-                        jsonObjItem.getString("NROMESA"));
+                        jsonObjItem.get("NROMESA").getAsString());
                 mNewValues.put(MesaPiso.NRO_ASIENTOS,
-                        jsonObjItem.getString("NROASIENTOS"));
+                        jsonObjItem.get("NROASIENTOS").getAsString());
                 mNewValues.put(MesaPiso.COD_ESTADO_MESA,
-                        jsonObjItem.getString("CEMESA"));
+                        jsonObjItem.get("CEMESA").getAsString());
                 mNewValues.put(MesaPiso.DESC_ESTADO_MESA,
-                        jsonObjItem.getString("DEMESA"));
+                        jsonObjItem.get("DEMESA").getAsString());
                 mNewValues.put(MesaPiso.COD_RESERVA,
-                        jsonObjItem.getString("CODRESERVA"));
+                        jsonObjItem.get("CODRESERVA").getAsString());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];
@@ -182,20 +160,20 @@ public class SincronizarService extends IntentService {
             throw new Exception("No hay 'Mesas'.");
         }
     }
-    private boolean saveCartaData(JSONArray jsonArrayCarta) throws Exception {
-        if (jsonArrayCarta.length() > 0) {
+    private boolean saveCartaData(JsonArray jsonArrayCarta) throws Exception {
+        if (jsonArrayCarta.size() > 0) {
             List<ContentValues> mValueList = new ArrayList<ContentValues>();
-            for (int i = 0; i < jsonArrayCarta.length(); i++) {
-                JSONObject jsonObjItem = jsonArrayCarta.getJSONObject(i);
+            for (int i = 0; i < jsonArrayCarta.size(); i++) {
+                JsonObject jsonObjItem = jsonArrayCarta.get(i).getAsJsonObject();
                 ContentValues mNewValues = new ContentValues();
                 mNewValues.put(Carta.COD_FAMILIA,
-                        jsonObjItem.getString("CODTIPO"));
+                        jsonObjItem.get("CODTIPO").getAsString());
                 mNewValues.put(Carta.COD_PRIORIDAD,
-                        jsonObjItem.getString("CODPRE"));
+                        jsonObjItem.get("CODPRE").getAsString());
                 mNewValues.put(Carta.COD_ARTICULO,
-                        jsonObjItem.getInt("CODART"));
+                        jsonObjItem.get("CODART").getAsInt());
                 mNewValues.put(Carta.COD_ARTICULO_PRINC,
-                        jsonObjItem.getInt("CODPRIN"));
+                        jsonObjItem.get("CODPRIN").getAsInt());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];
@@ -207,24 +185,24 @@ public class SincronizarService extends IntentService {
             throw new Exception("No hay 'Carta'.");
         }
     }
-    private boolean saveClienteData(JSONArray jsonArrayCliente) throws Exception {
-        if (jsonArrayCliente.length() > 0) {
+    private boolean saveClienteData(JsonArray jsonArrayCliente) throws Exception {
+        if (jsonArrayCliente.size() > 0) {
             List<ContentValues> mValueList = new ArrayList<ContentValues>();
-            for (int i = 0; i < jsonArrayCliente.length(); i++) {
-                JSONObject jsonObjItem = jsonArrayCliente.getJSONObject(i);
+            for (int i = 0; i < jsonArrayCliente.size(); i++) {
+                JsonObject jsonObjItem = jsonArrayCliente.get(i).getAsJsonObject();
                 ContentValues mNewValues = new ContentValues();
                 mNewValues.put(Cliente.ID,
-                        jsonObjItem.getLong("CODCLI"));
+                        jsonObjItem.get("CODCLI").getAsLong());
                 mNewValues.put(Cliente.RAZON_SOCIAL,
-                        jsonObjItem.getString("RAZONSOCIAL"));
+                        jsonObjItem.get("RAZONSOCIAL").getAsString());
                 mNewValues.put(Cliente.RAZON_SOCIAL_NORM,
-                        jsonObjItem.getString("RAZONSOCIAL"));
+                        jsonObjItem.get("RAZONSOCIAL").getAsString());
                 mNewValues.put(Cliente.TIPO_PERSONA,
-                        jsonObjItem.getString("TIPOPERSONA"));
+                        jsonObjItem.get("TIPOPERSONA").getAsString());
                 mNewValues.put(Cliente.NRO_DOCUMENTO,
-                        jsonObjItem.getString("NROID"));
+                        jsonObjItem.get("NROID").getAsString());
                 mNewValues.put(Cliente.DIRECCION,
-                        jsonObjItem.getString("DIRECCION"));
+                        jsonObjItem.get("DIRECCION").getAsString());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];
@@ -236,24 +214,24 @@ public class SincronizarService extends IntentService {
             throw new Exception("No hay 'Clientes'.");
         }
     }
-    private boolean saveArticuloPrecioData(JSONArray jsonArrayArticulo) throws Exception {
-        if (jsonArrayArticulo.length() > 0) {
+    private boolean saveArticuloPrecioData(JsonArray jsonArrayArticulo) throws Exception {
+        if (jsonArrayArticulo.size() > 0) {
             List<ContentValues> mValueList = new ArrayList<ContentValues>();
-            for (int i = 0; i < jsonArrayArticulo.length(); i++) {
-                JSONObject jsonObjItem = jsonArrayArticulo.getJSONObject(i);
+            for (int i = 0; i < jsonArrayArticulo.size(); i++) {
+                JsonObject jsonObjItem = jsonArrayArticulo.get(i).getAsJsonObject();
                 ContentValues mNewValues = new ContentValues();
                 mNewValues.put(Articulo.ID,
-                        jsonObjItem.getLong("codart"));
+                        jsonObjItem.get("codart").getAsLong());
                 mNewValues.put(Articulo.DESCRIPCION,
-                        jsonObjItem.getString("desart"));
+                        jsonObjItem.get("desart").getAsString());
                 mNewValues.put(Articulo.DESCRIPCION_NORM,
-                        jsonObjItem.getString("desart"));
+                        jsonObjItem.get("desart").getAsString());
                 mNewValues.put(Articulo.UM,
-                        jsonObjItem.getString("um"));
+                        jsonObjItem.get("um").getAsString());
                 mNewValues.put(Articulo.UM_DESC,
-                        jsonObjItem.getString("desum"));
+                        jsonObjItem.get("desum").getAsString());
                 mNewValues.put(Articulo.PRECIO,
-                        jsonObjItem.getDouble("precio"));
+                        jsonObjItem.get("precio").getAsDouble());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];
@@ -267,4 +245,31 @@ public class SincronizarService extends IntentService {
     }
 
 
+    @Override
+    public void onCompleted(Exception e, JsonObject result) {
+        if(e!=null){
+            exito=false;
+            mensaje=e.getMessage();
+        }
+        if(result!=null){
+            try {
+                exito=saveSyncDataToDB(result);
+                Log.d(SmartWaiterContract.TAG,"Sincronizacion Correcta");
+                exito=true;
+            } catch (Exception ex) {
+                exito=false;
+                mensaje=ex.getMessage();
+            }
+        }
+        enviarNotificacion();
+    }
+    private void enviarNotificacion(){
+        Intent broadcastIntent=new Intent();
+        broadcastIntent.setAction(SincronizarService.ACTION_SYNC_DATA);
+        broadcastIntent.putExtra("exito",exito);
+        broadcastIntent.putExtra("resultado",2);
+        broadcastIntent.putExtra("mensaje",mensaje);
+
+        sendOrderedBroadcast(broadcastIntent,null);
+    }
 }
