@@ -84,7 +84,8 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
                 + Tables.FAMILIA + " ("
                 + Familia.ID				 + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + Familia.CODIGO			 + " TEXT NOT NULL,"
-                + Familia.DESCRIPCION    	 + " TEXT"
+                + Familia.DESCRIPCION    	 + " TEXT,"
+                + Familia.URL                + " TEXT "
                 + " )"
         );
         db.execSQL("CREATE TABLE "
@@ -133,7 +134,9 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
                 + Articulo.DESCRIPCION_NORM    	+ " TEXT,"
                 + Articulo.UM                   + " TEXT,"
                 + Articulo.UM_DESC              + " TEXT,"
-                + Articulo.PRECIO               + " REAL"
+                + Articulo.PRECIO               + " REAL,"
+                + Articulo.COD_LISTAPRECIO      + " INTEGER,"
+                + Articulo.URL                  + " TEXT"
                 + " )"
         );
     }
@@ -154,7 +157,7 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
     public int InsertFamilias(ContentValues[] values) {
         int numInserted = 0;
         String insertQuery = "INSERT INTO "	+ Tables.FAMILIA +
-                "(" + Familia.CODIGO + "," + Familia.DESCRIPCION + ") VALUES (?,?)";
+                "(" + Familia.CODIGO + "," + Familia.DESCRIPCION + "," + Familia.URL +") VALUES (?,?,?)";
         try {
             this.openDatabase(true); //true=getWritableDatabase
             SQLiteStatement statement=db.compileStatement(insertQuery);
@@ -164,6 +167,7 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
                 statement.clearBindings();
                 statement.bindString(1,values[i].getAsString(Familia.CODIGO));
                 statement.bindString(2,values[i].getAsString(Familia.DESCRIPCION));
+                statement.bindString(3,values[i].getAsString(Familia.URL));
                 statement.execute();
             }
             db.setTransactionSuccessful();
@@ -306,8 +310,9 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
         String insertQuery="INSERT INTO " + Tables.ARTICULO + "( "+
                 Articulo.ID + "," + Articulo.DESCRIPCION + "," +
                 Articulo.DESCRIPCION_NORM + "," + Articulo.UM + "," +
-                Articulo.UM_DESC + "," + Articulo.PRECIO + ") "+
-                "VALUES (?,?,?,?,?,?)";
+                Articulo.UM_DESC + "," + Articulo.PRECIO + "," +
+                Articulo.COD_LISTAPRECIO + "," + Articulo.URL + ") " +
+                "VALUES (?,?,?,?,?,?,?,?)";
         try{
             this.openDatabase(true);
             SQLiteStatement statement=db.compileStatement(insertQuery);
@@ -323,6 +328,8 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
                 statement.bindString(4, values[i].getAsString(Articulo.UM));
                 statement.bindString(5,values[i].getAsString(Articulo.UM_DESC));
                 statement.bindDouble(6, values[i].getAsDouble(Articulo.PRECIO));
+                statement.bindLong(7,values[i].getAsLong(Articulo.COD_LISTAPRECIO));
+                statement.bindString(8,values[i].getAsString(Articulo.URL));
                 statement.execute();
             }
             db.setTransactionSuccessful();

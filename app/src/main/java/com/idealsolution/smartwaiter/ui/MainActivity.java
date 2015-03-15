@@ -124,7 +124,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("QuickOrder", "SyncData broadcast received");
+            Log.d(SmartWaiterContract.TAG, "SyncData broadcast received");
             // if necessary get data from intent
             boolean exito = intent.getBooleanExtra("exito", false);
 
@@ -140,7 +140,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             } else {
                 mensaje = intent.getStringExtra("mensaje");
                 enableControles(false);
-                Log.d("QuickOrder",
+                Log.d(SmartWaiterContract.TAG,
                         "Exception from BroadcastReceiver within SincronizarActivity :"
                                 + mensaje);
                 // update the display

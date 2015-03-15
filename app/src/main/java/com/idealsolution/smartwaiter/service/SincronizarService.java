@@ -53,7 +53,7 @@ public class SincronizarService extends IntentService implements FutureCallback<
             if (networkInfo != null && networkInfo.isConnected()) {
                 Ion.with(getApplicationContext())
                     .load(RestUtil.URLServer
-                        + "ObtenerDatosIniciales/?codCia=001&cadenaConexion=Initial%20Catalog=ABR")
+                        + "ObtenerDatosIniciales/?usuario=SUPERVISOR&codCia=001&cadenaConexion=Initial%20Catalog=ABR")
                         .asJsonObject().setCallback(this);
             }
             else {
@@ -93,6 +93,8 @@ public class SincronizarService extends IntentService implements FutureCallback<
                         jsonObjItem.get("codelemento").getAsString());
                 mNewValues.put(Familia.DESCRIPCION,
                         jsonObjItem.get("descripcion").getAsString());
+                mNewValues.put(Familia.URL,
+                        jsonObjItem.get("factorc").getAsString());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];
@@ -221,17 +223,21 @@ public class SincronizarService extends IntentService implements FutureCallback<
                 JsonObject jsonObjItem = jsonArrayArticulo.get(i).getAsJsonObject();
                 ContentValues mNewValues = new ContentValues();
                 mNewValues.put(Articulo.ID,
-                        jsonObjItem.get("codart").getAsLong());
+                        jsonObjItem.get("CODART").getAsLong());
                 mNewValues.put(Articulo.DESCRIPCION,
                         jsonObjItem.get("desart").getAsString());
                 mNewValues.put(Articulo.DESCRIPCION_NORM,
                         jsonObjItem.get("desart").getAsString());
                 mNewValues.put(Articulo.UM,
-                        jsonObjItem.get("um").getAsString());
+                        jsonObjItem.get("UM").getAsString());
                 mNewValues.put(Articulo.UM_DESC,
                         jsonObjItem.get("desum").getAsString());
                 mNewValues.put(Articulo.PRECIO,
-                        jsonObjItem.get("precio").getAsDouble());
+                        jsonObjItem.get("PRECIO").getAsDouble());
+                mNewValues.put(Articulo.COD_LISTAPRECIO,
+                        jsonObjItem.get("idlistaprecio").getAsInt());
+                mNewValues.put(Articulo.URL,
+                        jsonObjItem.get("url").getAsString());
                 mValueList.add(mNewValues);
             }
             ContentValues[] mValueArray = new ContentValues[mValueList.size()];

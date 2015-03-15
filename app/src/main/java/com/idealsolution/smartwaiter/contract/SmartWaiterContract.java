@@ -76,6 +76,9 @@ public class SmartWaiterContract {
 
          String DESCRIPCION  = "descripcion";
          int DESCRIPCION_COL = 2;
+
+         String URL="url";
+         int URL_COL=3;
     }
     interface PrioridadColumns{
          String ID  = "_id";
@@ -168,6 +171,12 @@ public class SmartWaiterContract {
 
          String PRECIO  = "um_precio";
          int PRECIO_COL = 5;
+
+        String COD_LISTAPRECIO="cod_lista_precio";
+        int COD_LISTAPRECIO_COL=6;
+
+        String URL="url";
+        int URL_COL=7;
     }
 
     public static final String CONTENT_AUTHORITY = "com.idealsolution.smartwaiter.provider";
