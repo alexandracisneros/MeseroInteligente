@@ -5,13 +5,25 @@ import android.content.Context;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.*;
+import com.idealsolution.smartwaiter.util.Lists;
+import com.idealsolution.smartwaiter.util.Maps;
+
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
+
+import static com.idealsolution.smartwaiter.util.LogUtils.LOGV;
+import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
 
 
 /**
@@ -39,15 +51,15 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
     public void openDatabase(boolean writable) {
         db= writable ? getWritableDatabase() : getReadableDatabase();
     }
-    interface Tables {
-        String PEDIDO_CABECERA="pedido_cabecera";
-        String PEDIDO_DETALLE="pedido_detalle";
-        String FAMILIA="familia";
-        String PRIORIDAD = "prioridad";
-        String CLIENTE = "cliente";
-        String MESA_PISO = "mesa_piso";
-        String CARTA = "carta";
-        String ARTICULO = "articulo";
+    public interface Tables {
+        static final String PEDIDO_CABECERA="pedido_cabecera";
+        static final String PEDIDO_DETALLE="pedido_detalle";
+        static final String FAMILIA="familia";
+        static final String PRIORIDAD = "prioridad";
+        static final String CLIENTE = "cliente";
+        static final String MESA_PISO = "mesa_piso";
+        static final String CARTA = "carta";
+        static final String ARTICULO = "articulo";
     }
 
     @Override
@@ -341,4 +353,39 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
         return numInserted;
     }
     //endregion
+
+
+    /**
+     * Execute query using the current internal state as {@code WHERE} clause.
+     */
+    public Cursor query(String table, String[] columns,
+                        String selection, String[] selectionArgs, String groupBy,
+                        String having, String orderBy, String limit) {
+        try {
+            this.openDatabase(false);
+            return db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+        }
+        finally {
+
+        }
+    }
+
+//    /**
+//     * Execute update using the current internal state as {@code WHERE} clause.
+//     */
+//    public int update(SQLiteDatabase db, ContentValues values) {
+//        assertTable();
+//        LOGV(TAG, "update() " + this);
+//        return db.update(mTable, values, getSelection(), getSelectionArgs());
+//    }
+//
+//    /**
+//     * Execute delete using the current internal state as {@code WHERE} clause.
+//     */
+//    public int delete(SQLiteDatabase db) {
+//        assertTable();
+//        LOGV(TAG, "delete() " + this);
+//        return db.delete(mTable, getSelection(), getSelectionArgs());
+//    }
+
 }

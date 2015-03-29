@@ -3,6 +3,10 @@ package com.idealsolution.smartwaiter.contract;
 import android.net.Uri;
 
 public class SmartWaiterContract {
+    /**
+     * Query parameter to create a distinct query.
+     */
+    public static final String QUERY_DISTINCT = "distinct ";
 
     public static final String TAG="SmartWaiter";
     interface PedidoCabeceraColumns{
@@ -188,6 +192,8 @@ public class SmartWaiterContract {
     private static final String PATH_PRIORIDADES = "prioridades";
     private static final String PATH_CLIENTES = "clientes";
     private static final String PATH_MESA_PISOS = "mesa_pisos";
+    private static final String PATH_AMBIENTES = "ambientes";
+    private static final String PATH_PISOS = "pisos";
     private static final String PATH_CARTAS = "cartas";
     private static final String PATH_ARTICULOS = "articulos";
 
@@ -237,10 +243,21 @@ public class SmartWaiterContract {
     public static class MesaPiso implements MesaPisoColumns{
         public static final Uri CONTENT_URI=
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MESA_PISOS).build();
+        public static final Uri CONTENT_AMBIENTE_URI =
+                CONTENT_URI.buildUpon().appendPath(PATH_AMBIENTES).build();
+        public static final Uri CONTENT_PISO_URI =
+                CONTENT_URI.buildUpon().appendPath(PATH_PISOS).build();
         public static final String CONTENT_TYPE =
                 "vnd.android.cursor.dir/vnd.idealsolution.mesa_piso";
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.idealsolution.mesa_piso";
+
+        // Used to fetch ambientes by a specific piso
+        public static final String AMBIENTES_POR_PISO_SELECTION =
+                MesaPiso.NRO_PISO + "= ? ";
+        // Used to fetch mesas by a specific piso and ambiente
+        public static final String MESAS_POR_PISO_AMBIENTE_SELECTION=
+                MesaPiso.NRO_PISO + "=? and " + MesaPiso.COD_AMBIENTE + "=? ";
     }
     public static class Carta implements CartaColumns{
         public static final Uri CONTENT_URI=
