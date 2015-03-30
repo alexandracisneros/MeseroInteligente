@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 
@@ -22,10 +21,10 @@ import static com.idealsolution.smartwaiter.util.LogUtils.LOGV;
 import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
 
 
-public class SmartWaiterProvider extends ContentProvider{
+public class SmartWaiterProvider extends ContentProvider {
     private static final String TAG = makeLogTag(SmartWaiterProvider.class);
     private SmartWaiterDatabase mDB;
-    private static final UriMatcher sUriMatcher=buildUriMatcher();
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     //region ConstantsForURIs
     private static final int PEDIDO_CABECERAS = 100;
@@ -55,43 +54,44 @@ public class SmartWaiterProvider extends ContentProvider{
     private static final int ARTICULOS_ID = 801;
     //endregion
 
-    private static UriMatcher buildUriMatcher(){
-        final UriMatcher matcher=new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority= SmartWaiterContract.CONTENT_AUTHORITY;
+    private static UriMatcher buildUriMatcher() {
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = SmartWaiterContract.CONTENT_AUTHORITY;
 
-        matcher.addURI(authority,"pedido_cabeceras",PEDIDO_CABECERAS);
-        matcher.addURI(authority,"pedido_cabeceras/#",PEDIDO_CABECERAS_ID);
+        matcher.addURI(authority, "pedido_cabeceras", PEDIDO_CABECERAS);
+        matcher.addURI(authority, "pedido_cabeceras/#", PEDIDO_CABECERAS_ID);
 
-        matcher.addURI(authority,"pedido_detalles",PEDIDO_DETALLES);
-        matcher.addURI(authority,"pedido_detalles/#",PEDIDO_DETALLES_ID);
+        matcher.addURI(authority, "pedido_detalles", PEDIDO_DETALLES);
+        matcher.addURI(authority, "pedido_detalles/#", PEDIDO_DETALLES_ID);
 
-        matcher.addURI(authority,"familias",FAMILIAS);
-        matcher.addURI(authority,"familias/#",FAMILIAS_ID);
+        matcher.addURI(authority, "familias", FAMILIAS);
+        matcher.addURI(authority, "familias/#", FAMILIAS_ID);
 
-        matcher.addURI(authority,"prioridades",PRIORIDADES);
-        matcher.addURI(authority,"prioridades/#",PRIORIDADES_ID);
+        matcher.addURI(authority, "prioridades", PRIORIDADES);
+        matcher.addURI(authority, "prioridades/#", PRIORIDADES_ID);
 
-        matcher.addURI(authority,"clientes",CLIENTES);
-        matcher.addURI(authority,"clientes/#",CLIENTES_ID);
+        matcher.addURI(authority, "clientes", CLIENTES);
+        matcher.addURI(authority, "clientes/#", CLIENTES_ID);
 
-        matcher.addURI(authority,"mesa_pisos",MESA_PISOS);
-        matcher.addURI(authority,"mesa_pisos/#",MESA_PISOS_ID);
-        matcher.addURI(authority,"mesa_pisos/pisos",MESA_PISOS_PISOS);
-        matcher.addURI(authority,"mesa_pisos/ambientes",MESA_PISOS_AMBIENTES);
+        matcher.addURI(authority, "mesa_pisos", MESA_PISOS);
+        matcher.addURI(authority, "mesa_pisos/#", MESA_PISOS_ID);
+        matcher.addURI(authority, "mesa_pisos/pisos", MESA_PISOS_PISOS);
+        matcher.addURI(authority, "mesa_pisos/ambientes", MESA_PISOS_AMBIENTES);
 
-        matcher.addURI(authority,"cartas",CARTAS);
-        matcher.addURI(authority,"cartas/#",CARTAS_ID);
+        matcher.addURI(authority, "cartas", CARTAS);
+        matcher.addURI(authority, "cartas/#", CARTAS_ID);
 
-        matcher.addURI(authority,"articulos",ARTICULOS);
-        matcher.addURI(authority,"articulos/#",ARTICULOS_ID);
+        matcher.addURI(authority, "articulos", ARTICULOS);
+        matcher.addURI(authority, "articulos/#", ARTICULOS_ID);
 
         return matcher;
     }
+
     @Override
     public boolean onCreate() {
         // there should always be minimum operations inside
         // the onCreate as it runs on the main thread
-        mDB=new SmartWaiterDatabase(getContext());
+        mDB = new SmartWaiterDatabase(getContext());
         return true;
     }
 
@@ -153,6 +153,7 @@ public class SmartWaiterProvider extends ContentProvider{
 //            }
         }
     }
+
     /**
      * Build an advanced {@link SelectionBuilder} to match the requested
      * {@link Uri}. This is usually only used by {@link #query}, since it
@@ -164,13 +165,13 @@ public class SmartWaiterProvider extends ContentProvider{
             case FAMILIAS: {
                 return builder.table(Tables.FAMILIA);
             }
-            case MESA_PISOS:{
+            case MESA_PISOS: {
                 return builder.table(Tables.MESA_PISO);
             }
-            case MESA_PISOS_PISOS:{
+            case MESA_PISOS_PISOS: {
                 return builder.table(Tables.MESA_PISO);
             }
-            case MESA_PISOS_AMBIENTES:{
+            case MESA_PISOS_AMBIENTES: {
                 return builder.table(Tables.MESA_PISO);
             }
 //            case BLOCKS_BETWEEN: {
@@ -412,8 +413,8 @@ public class SmartWaiterProvider extends ContentProvider{
 
     @Override
     public String getType(Uri uri) {
-        final int match=sUriMatcher.match(uri);
-        switch (match){
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
             //Mesa Piso - Inicio
             case MESA_PISOS:
                 return MesaPiso.CONTENT_TYPE;
@@ -444,38 +445,39 @@ public class SmartWaiterProvider extends ContentProvider{
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
     }
+
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
-        final int match=sUriMatcher.match(uri);
-        Log.d(SmartWaiterContract.TAG,"LLegue a bulkInsert del ContentProvider. URL:" + uri.toString());
+        final int match = sUriMatcher.match(uri);
+        Log.d(SmartWaiterContract.TAG, "LLegue a bulkInsert del ContentProvider. URL:" + uri.toString());
         int numInserted;
-        Log.d(SmartWaiterContract.TAG,"LLegue a match=" + match);
-        switch (match){
-            case FAMILIAS:{
-                numInserted=mDB.InsertFamilias(values);
+        Log.d(SmartWaiterContract.TAG, "LLegue a match=" + match);
+        switch (match) {
+            case FAMILIAS: {
+                numInserted = mDB.InsertFamilias(values);
                 return numInserted;
             }
-            case PRIORIDADES:{
-                numInserted=mDB.InsertPrioridades(values);
+            case PRIORIDADES: {
+                numInserted = mDB.InsertPrioridades(values);
                 return numInserted;
             }
-            case CLIENTES:{
-                numInserted=mDB.InsertClientes(values);
+            case CLIENTES: {
+                numInserted = mDB.InsertClientes(values);
                 return numInserted;
             }
-            case MESA_PISOS:{
-                numInserted=mDB.InsertMesaPisos(values);
+            case MESA_PISOS: {
+                numInserted = mDB.InsertMesaPisos(values);
                 return numInserted;
             }
-            case CARTAS:{
-                numInserted=mDB.InsertCarta(values);
+            case CARTAS: {
+                numInserted = mDB.InsertCarta(values);
                 return numInserted;
             }
-            case ARTICULOS:{
-                numInserted=mDB.InsertArticulos(values);
+            case ARTICULOS: {
+                numInserted = mDB.InsertArticulos(values);
                 return numInserted;
             }
-            default:{
+            default: {
                 throw new UnsupportedOperationException("Unknown insert uri: " + uri);
             }
         }
@@ -508,10 +510,10 @@ public class SmartWaiterProvider extends ContentProvider{
 //                        .where(Tags.TAG_ID + "=?", tagId);
                 return builder.table(Tables.MESA_PISO);
             }
-            case MESA_PISOS_PISOS:{
+            case MESA_PISOS_PISOS: {
                 return builder.table(Tables.MESA_PISO);
             }
-            case MESA_PISOS_AMBIENTES:{
+            case MESA_PISOS_AMBIENTES: {
                 return builder.table(Tables.MESA_PISO);
             }
             case CARTAS: {
