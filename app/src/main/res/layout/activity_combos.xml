@@ -2,19 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
 
     <Spinner
+        android:id="@+id/pisos_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/pisos_spinner" />
+        android:layout_height="0dp"
+        android:layout_weight="1.5" />
+
     <Spinner
+        android:id="@+id/ambientes_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ambientes_spinner" />
-    <Spinner
+        android:layout_height="0dp"
+        android:layout_weight="1.5" />
+
+    <!--A RecyclerView with some commonly used attributes-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mesas_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/mesas_spinner" />
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:scrollbars="vertical" />
+
 </LinearLayout>

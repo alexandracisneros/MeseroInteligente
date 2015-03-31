@@ -7,16 +7,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
-
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract.MesaPiso;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.ui.CombosActivity;
+import com.idealsolution.smartwaiter.ui.MesaItemAdapter;
 
 
 import static com.idealsolution.smartwaiter.util.LogUtils.LOGD;
 import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
-import static com.idealsolution.smartwaiter.contract.SmartWaiterContract.MesaPiso;
 
 
 public class MesaPisoHelper {
@@ -107,7 +106,8 @@ public class MesaPisoHelper {
                     public void onItemSelected(AdapterView<?> spinner, View container,
                                                int position, long id) {
                         int codAmbiente = mContext.geListaAmbientes().get(position).getCodigo();
-                        mContext.loadMesasSpinner(nroPiso, codAmbiente);
+                        //mContext.loadMesasSpinner(nroPiso, codAmbiente);
+                        mContext.loadMesasObject(nroPiso, codAmbiente);
 
                     }
 
@@ -121,8 +121,7 @@ public class MesaPisoHelper {
             }
         }.execute();
     }
-
-    public void getMesasDataAsync(final int nroPiso, final int codAmbiente) {
+    public void getMesasAsync(final int nroPiso, final int codAmbiente) {
 
         new AsyncTask<Void, Void, Cursor>() {
             @Override
@@ -138,34 +137,22 @@ public class MesaPisoHelper {
             @Override
             protected void onPostExecute(Cursor cursor) {
                 while (cursor.moveToNext()) {
-                    SpinnerObject item = new SpinnerObject();
-                    item.setCodigo(cursor.getInt(MesasQuery.MESA_ID));
-                    item.setDescripcion("MESA " + cursor.getInt(MesasQuery.MESA_NRO_MESA));
-                    mContext.getListaMesas().add(item);
+                    MesaPisoObject item = new MesaPisoObject();
+                    item.setId(cursor.getInt(MesasQuery.MESA_ID));
+                    item.setNro_piso(cursor.getInt(MesasQuery.MESA_NRO_PISO));
+                    item.setCod_ambiente(cursor.getInt(MesasQuery.MESA_COD_AMBIENTE));
+                    item.setNro_mesa(cursor.getInt(MesasQuery.MESA_NRO_MESA));
+                    item.setNro_asientos(cursor.getInt(MesasQuery.MESA_NRO_ASIENTOS));
+                    item.setCod_estado(cursor.getString(MesasQuery.MESA_COD_ESTADO));
+                    item.setDesc_estado(cursor.getString(MesasQuery.MESA_DESC_ESTADO));
+                    item.setCod_reserva(cursor.getInt(MesasQuery.MESA_COD_RESERVA));
+                    mContext.getListaObjectMesas().add(item);
                 }
                 cursor.close();
-                ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_spinner_item, mContext.getListaMesas());
-                mContext.getMesasSpinner().setAdapter(adapter);
+                mContext.setMesasAdapter(new MesaItemAdapter(mContext,mContext.getListaObjectMesas()));
+                mContext.getMesasAdapter().setOnItemClickListener(mContext);
+                mContext.getRecylerView().setAdapter(mContext.getMesasAdapter());
 
-                OnItemSelectedListener mesasSelectedListener = new OnItemSelectedListener() {
-
-                    @Override
-                    public void onItemSelected(AdapterView<?> spinner, View container,
-                                               int position, long id) {
-
-                        Toast.makeText(mContext, "Mesa : " + mContext.getListaMesas().get(position).getDescripcion(), Toast.LENGTH_SHORT).show();
-
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> arg0) {
-                        // TODO Auto-generated method stub
-                    }
-                };
-                mContext.getMesasSpinner().setSelection(0, false);
-                // Setting ItemClick Handler for Spinner Widget
-                mContext.getMesasSpinner().setOnItemSelectedListener(mesasSelectedListener);
             }
         }.execute();
     }
