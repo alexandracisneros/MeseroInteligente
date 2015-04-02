@@ -196,6 +196,8 @@ public class SmartWaiterContract {
     private static final String PATH_PISOS = "pisos";
     private static final String PATH_CARTAS = "cartas";
     private static final String PATH_ARTICULOS = "articulos";
+    private static final String PATH_ARTICULOS_FAMILIA = "familia";
+
 
     public static class PedidoCabecera implements PedidoCabeceraColumns{
         public static final Uri CONTENT_URI=
@@ -221,6 +223,11 @@ public class SmartWaiterContract {
                 "vnd.android.cursor.dir/vnd.idealsolution.familia";
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.idealsolution.familia";
+
+        /** Read {@link #ID} from {@link Familia} {@link Uri}. */
+        public static String getFamiliaId(Uri uri) {
+            return uri.getPathSegments().get(2);
+        }
 
     }
     public static class Prioridad implements PrioridadColumns{
@@ -274,6 +281,14 @@ public class SmartWaiterContract {
                 "vnd.android.cursor.dir/vnd.idealsolution.articulo";
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.idealsolution.articulo";
+        /**
+         * Build {@link Uri} that references any {@link Articulo} associated
+         * with the requested {@link #ID}. ID is equals to Familia.ID
+         */
+        public static Uri buildArticuloFamiliaUri(int familiaId) {
+            return CONTENT_URI.buildUpon().appendPath(PATH_ARTICULOS_FAMILIA)
+                    .appendPath(String.valueOf(familiaId)).build();
+        }
 
     }
 }

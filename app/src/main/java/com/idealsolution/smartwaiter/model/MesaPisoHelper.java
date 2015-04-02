@@ -9,10 +9,14 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.MesaPiso;
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Articulo;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
-import com.idealsolution.smartwaiter.ui.CombosActivity;
+import com.idealsolution.smartwaiter.ui.MesasActivity;
 import com.idealsolution.smartwaiter.ui.MesaItemAdapter;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.idealsolution.smartwaiter.util.LogUtils.LOGD;
 import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
@@ -20,9 +24,9 @@ import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
 
 public class MesaPisoHelper {
     private static final String TAG = makeLogTag(MesaPisoHelper.class);
-    private CombosActivity mContext;
+    private MesasActivity mContext;
 
-    public MesaPisoHelper(CombosActivity context) {
+    public MesaPisoHelper(MesasActivity context) {
         this.mContext = context;
     }
 
@@ -156,6 +160,42 @@ public class MesaPisoHelper {
             }
         }.execute();
     }
+    public void getArticuloPorFamiliaAsync(final int familiaId) {
+
+        new AsyncTask<Void, Void, Cursor>() {
+            @Override
+            protected Cursor doInBackground(Void... params) {
+                return mContext.getApplicationContext().getContentResolver().query(
+                        Articulo.buildArticuloFamiliaUri(familiaId),
+                        ArticulosQuery.PROJECTION,
+                        null,
+                        null,
+                        null);
+            }
+
+            @Override
+            protected void onPostExecute(Cursor cursor) {
+                ArrayList<ArticuloObject> lista=new ArrayList<ArticuloObject>();
+                while (cursor.moveToNext()) {
+                    ArticuloObject item = new ArticuloObject();
+                    item.setId(cursor.getInt(ArticulosQuery.ID));
+                    item.setDescripcionNorm(cursor.getString(ArticulosQuery.DESCRIPCION_NORM));
+                    item.setUm(cursor.getString(ArticulosQuery.UM));
+                    item.setUmDescripcion(cursor.getString(ArticulosQuery.UM_DESC));
+                    item.setPrecio(cursor.getFloat(ArticulosQuery.PRECIO));
+                    item.setUrl(cursor.getString(ArticulosQuery.URL));
+
+                    lista.add(item);
+                }
+                cursor.close();
+//                mContext.setMesasAdapter(new MesaItemAdapter(mContext,mContext.getListaObjectMesas()));
+//                mContext.getMesasAdapter().setOnItemClickListener(mContext);
+//                mContext.getRecylerView().setAdapter(mContext.getMesasAdapter());
+                int i=2+2;
+
+            }
+        }.execute();
+    }
 
     private interface PisosQuery {
         String[] PROJECTION = {
@@ -193,5 +233,21 @@ public class MesaPisoHelper {
         int MESA_COD_ESTADO = 5;
         int MESA_DESC_ESTADO = 6;
         int MESA_COD_RESERVA = 7;
+    }
+    private interface ArticulosQuery{
+        String[] PROJECTION={
+                SmartWaiterContract.QUERY_DISTINCT + Articulo.ID,
+                Articulo.DESCRIPCION_NORM,
+                Articulo.UM,
+                Articulo.UM_DESC,
+                Articulo.PRECIO,
+                Articulo.URL
+        };
+        int ID=0;
+        int DESCRIPCION_NORM=1;
+        int UM=2;
+        int UM_DESC=3;
+        int PRECIO=4;
+        int URL=5;
     }
 }

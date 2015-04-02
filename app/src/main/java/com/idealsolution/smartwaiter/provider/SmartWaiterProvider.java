@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.MesaPiso;
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Familia;
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Articulo;
 import com.idealsolution.smartwaiter.database.SmartWaiterDatabase;
 import com.idealsolution.smartwaiter.database.SmartWaiterDatabase.Tables;
 import com.idealsolution.smartwaiter.util.SelectionBuilder;
@@ -52,6 +54,7 @@ public class SmartWaiterProvider extends ContentProvider {
 
     private static final int ARTICULOS = 800;
     private static final int ARTICULOS_ID = 801;
+    private static final int ARTICULOS_ID_FAMILIA=802;
     //endregion
 
     private static UriMatcher buildUriMatcher() {
@@ -83,6 +86,7 @@ public class SmartWaiterProvider extends ContentProvider {
 
         matcher.addURI(authority, "articulos", ARTICULOS);
         matcher.addURI(authority, "articulos/#", ARTICULOS_ID);
+        matcher.addURI(authority, "articulos/familia/#", ARTICULOS_ID_FAMILIA);
 
         return matcher;
     }
@@ -173,6 +177,12 @@ public class SmartWaiterProvider extends ContentProvider {
             }
             case MESA_PISOS_AMBIENTES: {
                 return builder.table(Tables.MESA_PISO);
+            }
+            case ARTICULOS_ID_FAMILIA:{
+                final String familiaId = Familia.getFamiliaId(uri);
+                return builder.table(Tables.ARTICULOS_JOIN_CARTA, familiaId)
+                        .mapToTable(Articulo.ID, Tables.ARTICULO);
+
             }
 //            case BLOCKS_BETWEEN: {
 //                final List<String> segments = uri.getPathSegments();
@@ -415,6 +425,8 @@ public class SmartWaiterProvider extends ContentProvider {
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
+            case FAMILIAS:
+                return Familia.CONTENT_TYPE;
             //Mesa Piso - Inicio
             case MESA_PISOS:
                 return MesaPiso.CONTENT_TYPE;
@@ -425,6 +437,8 @@ public class SmartWaiterProvider extends ContentProvider {
             case MESA_PISOS_AMBIENTES:
                 return MesaPiso.CONTENT_TYPE;
             //Mesa Piso - Fin
+            case ARTICULOS_ID_FAMILIA:
+                return Articulo.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 

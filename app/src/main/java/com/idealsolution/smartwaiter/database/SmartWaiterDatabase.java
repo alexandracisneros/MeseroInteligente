@@ -60,6 +60,10 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
         static final String MESA_PISO = "mesa_piso";
         static final String CARTA = "carta";
         static final String ARTICULO = "articulo";
+
+        static final String ARTICULOS_JOIN_CARTA=ARTICULO + " JOIN " + CARTA
+                + " ON " + ARTICULO + "." + Articulo.ID + " = " + CARTA + "." + Carta.COD_ARTICULO
+                + " AND " + CARTA + "." + Carta.COD_FAMILIA + "=? " ;
     }
 
     @Override

@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.database.SmartWaiterDatabase;
 
 import java.util.ArrayList;
@@ -112,11 +113,11 @@ public class SelectionBuilder {
      */
     public SelectionBuilder table(String table, String... tableParams) {
         if (tableParams != null && tableParams.length > 0) {
-            String[] parts = table.split("[?]", tableParams.length+1);
+            String[] parts = table.split("[?]", tableParams.length + 1);
             StringBuilder sb = new StringBuilder(parts[0]);
-            for (int i=1; i<parts.length; i++) {
-                sb.append('"').append(tableParams[i-1]).append('"')
-                  .append(parts[i]);
+            for (int i = 1; i < parts.length; i++) {
+                sb.append('"').append(tableParams[i - 1]).append('"')
+                        .append(parts[i]);
             }
             mTable = sb.toString();
         } else {
@@ -160,10 +161,19 @@ public class SelectionBuilder {
     }
 
     private void mapColumns(String[] columns) {
+        boolean contains_distinct = false; //01/04/2015
         for (int i = 0; i < columns.length; i++) {
-            final String target = mProjectionMap.get(columns[i]);
+            //Inicio 01/04/2015
+            //final String target = mProjectionMap.get(columns[i]);
+            contains_distinct = columns[i].contains(SmartWaiterContract.QUERY_DISTINCT);
+            final String colName = (contains_distinct ? columns[i].replace(SmartWaiterContract.QUERY_DISTINCT, "") : columns[i]);
+            final String target = mProjectionMap.get(colName);
+            //Fin 01/04/2015
             if (target != null) {
-                columns[i] = target;
+                //Inicio 01/04/2015
+                //columns[i] =target;
+                columns[i] = (contains_distinct ? SmartWaiterContract.QUERY_DISTINCT + target : target);
+                //Fin 01/04/2015
             }
         }
     }
@@ -179,14 +189,14 @@ public class SelectionBuilder {
      * Execute query using the current internal state as {@code WHERE} clause.
      */
     public Cursor query(SmartWaiterDatabase db, String[] columns, String orderBy) {
-        return query(db,columns, orderBy, null);
+        return query(db, columns, orderBy, null);
     }
 
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
      */
-    public Cursor query(SmartWaiterDatabase db,String[] columns, String orderBy,
-            String limit) {
+    public Cursor query(SmartWaiterDatabase db, String[] columns, String orderBy,
+                        String limit) {
         assertTable();
         if (columns != null) mapColumns(columns);
         LOGV(TAG, "query(columns=" + Arrays.toString(columns)

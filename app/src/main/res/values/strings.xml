@@ -16,5 +16,6 @@
     <string name="sync_notify_text_complete">El proceso de sicronización se completó con exito.</string>
     <string name="sync_notify_title_error">Error en sincronización</string>
     <string name="title_activity_combos">CombosActivity</string>
+    <string name="title_activity_category">Categories</string>
     <!-- Sincronizacion Receiver -->
 </resources>

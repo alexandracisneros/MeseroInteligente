@@ -16,7 +16,7 @@ import com.idealsolution.smartwaiter.util.InsetDecoration;
 
 import java.util.ArrayList;
 
-public class CombosActivity extends Activity implements
+public class MesasActivity extends Activity implements
         MesaItemAdapter.OnItemClickListener{
     private Spinner mPisosSpinner;
     private Spinner mAmbienteSpinner;
@@ -34,7 +34,7 @@ public class CombosActivity extends Activity implements
     // The ScheduleHelper is responsible for feeding data in a format suitable to the Adapter.
     private MesaPisoHelper mDataHelper;
 
-    public CombosActivity() {
+    public MesasActivity() {
         mDataHelper = new MesaPisoHelper(this);
 
     }
@@ -78,7 +78,7 @@ public class CombosActivity extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_combos);
+        setContentView(R.layout.activity_mesas);
         mPisosSpinner = (Spinner) findViewById(R.id.pisos_spinner);
         mAmbienteSpinner = (Spinner) findViewById(R.id.ambientes_spinner);
 
@@ -104,6 +104,7 @@ public class CombosActivity extends Activity implements
     private void loadPisosSpinner() {
         mListaPisos = new ArrayList<SpinnerObject>();
         mDataHelper.getPisosAsync();
+        mDataHelper.getArticuloPorFamiliaAsync(0);
     }
     public void loadMesasObject(int nroPiso, int codAmbiente) {
         mListaObjectMesas=new ArrayList<MesaPisoObject>();
