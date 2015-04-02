@@ -199,15 +199,15 @@ public class MesaPisoHelper {
 
     private interface PisosQuery {
         String[] PROJECTION = {
-                SmartWaiterContract.QUERY_DISTINCT + MesaPiso.NRO_PISO
+                MesaPiso.NRO_PISO
         };
         int PISO_NRO_PISO = 0;
     }
 
     private interface AmbientesQuery {
         String[] PROJECTION = {
-                SmartWaiterContract.QUERY_DISTINCT + MesaPiso.COD_AMBIENTE
-                , MesaPiso.DESC_AMBIENTE
+                MesaPiso.COD_AMBIENTE,
+                MesaPiso.DESC_AMBIENTE
         };
 
         int AMBIENTE_COD_AMBIENTE = 0;
@@ -236,7 +236,7 @@ public class MesaPisoHelper {
     }
     private interface ArticulosQuery{
         String[] PROJECTION={
-                SmartWaiterContract.QUERY_DISTINCT + Articulo.ID,
+                Articulo.ID,
                 Articulo.DESCRIPCION_NORM,
                 Articulo.UM,
                 Articulo.UM_DESC,

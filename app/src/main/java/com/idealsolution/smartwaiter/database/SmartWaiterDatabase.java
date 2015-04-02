@@ -5,22 +5,16 @@ import android.content.Context;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.*;
-import com.idealsolution.smartwaiter.util.Lists;
-import com.idealsolution.smartwaiter.util.Maps;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
+
 
 import static com.idealsolution.smartwaiter.util.LogUtils.LOGV;
 import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
@@ -362,12 +356,12 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
      */
-    public Cursor query(String table, String[] columns,
+    public Cursor query(boolean distinct,String table, String[] columns,
                         String selection, String[] selectionArgs, String groupBy,
                         String having, String orderBy, String limit) {
         try {
             this.openDatabase(false);
-            return db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+            return db.query(distinct,table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         }
         finally {
 

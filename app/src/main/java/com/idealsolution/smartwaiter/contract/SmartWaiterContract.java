@@ -6,7 +6,7 @@ public class SmartWaiterContract {
     /**
      * Query parameter to create a distinct query.
      */
-    public static final String QUERY_DISTINCT = "distinct ";
+    public static final String QUERY_PARAMETER_DISTINCT = "distinct";
 
     public static final String TAG="SmartWaiter";
     interface PedidoCabeceraColumns{
@@ -251,9 +251,13 @@ public class SmartWaiterContract {
         public static final Uri CONTENT_URI=
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MESA_PISOS).build();
         public static final Uri CONTENT_AMBIENTE_URI =
-                CONTENT_URI.buildUpon().appendPath(PATH_AMBIENTES).build();
+                CONTENT_URI.buildUpon().appendPath(PATH_AMBIENTES)
+                        .appendQueryParameter(SmartWaiterContract.QUERY_PARAMETER_DISTINCT,"true") // SELECT with DISTINCT
+                        .build();
         public static final Uri CONTENT_PISO_URI =
-                CONTENT_URI.buildUpon().appendPath(PATH_PISOS).build();
+                CONTENT_URI.buildUpon().appendPath(PATH_PISOS)
+                        .appendQueryParameter(SmartWaiterContract.QUERY_PARAMETER_DISTINCT,"true") // SELECT with DISTINCT
+                        .build();
         public static final String CONTENT_TYPE =
                 "vnd.android.cursor.dir/vnd.idealsolution.mesa_piso";
         public static final String CONTENT_ITEM_TYPE =
@@ -287,7 +291,9 @@ public class SmartWaiterContract {
          */
         public static Uri buildArticuloFamiliaUri(int familiaId) {
             return CONTENT_URI.buildUpon().appendPath(PATH_ARTICULOS_FAMILIA)
-                    .appendPath(String.valueOf(familiaId)).build();
+                    .appendPath(String.valueOf(familiaId))
+                    .appendQueryParameter(SmartWaiterContract.QUERY_PARAMETER_DISTINCT,"true") // SELECT with DISTINCT
+                    .build();
         }
 
     }

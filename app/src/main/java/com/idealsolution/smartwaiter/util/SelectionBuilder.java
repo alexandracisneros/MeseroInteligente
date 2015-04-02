@@ -161,19 +161,10 @@ public class SelectionBuilder {
     }
 
     private void mapColumns(String[] columns) {
-        boolean contains_distinct = false; //01/04/2015
         for (int i = 0; i < columns.length; i++) {
-            //Inicio 01/04/2015
-            //final String target = mProjectionMap.get(columns[i]);
-            contains_distinct = columns[i].contains(SmartWaiterContract.QUERY_DISTINCT);
-            final String colName = (contains_distinct ? columns[i].replace(SmartWaiterContract.QUERY_DISTINCT, "") : columns[i]);
-            final String target = mProjectionMap.get(colName);
-            //Fin 01/04/2015
+            final String target = mProjectionMap.get(columns[i]);
             if (target != null) {
-                //Inicio 01/04/2015
-                //columns[i] =target;
-                columns[i] = (contains_distinct ? SmartWaiterContract.QUERY_DISTINCT + target : target);
-                //Fin 01/04/2015
+                columns[i] = target;
             }
         }
     }
@@ -189,19 +180,19 @@ public class SelectionBuilder {
      * Execute query using the current internal state as {@code WHERE} clause.
      */
     public Cursor query(SmartWaiterDatabase db, String[] columns, String orderBy) {
-        return query(db, columns, orderBy, null);
+        return query(db,false, columns, orderBy, null);
     }
 
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
      */
-    public Cursor query(SmartWaiterDatabase db, String[] columns, String orderBy,
+    public Cursor query(SmartWaiterDatabase db, boolean distinct, String[] columns, String orderBy,
                         String limit) {
         assertTable();
         if (columns != null) mapColumns(columns);
         LOGV(TAG, "query(columns=" + Arrays.toString(columns)
                 + ") " + this);
-        return db.query(mTable, columns, getSelection(), getSelectionArgs(), mGroupBy,
+        return db.query(distinct, mTable, columns, getSelection(), getSelectionArgs(), mGroupBy,
                 mHaving, orderBy, limit); //28/05/2015
     }
 
