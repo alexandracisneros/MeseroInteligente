@@ -1,6 +1,7 @@
 package com.idealsolution.smartwaiter.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -104,7 +105,7 @@ public class MesasActivity extends Activity implements
     private void loadPisosSpinner() {
         mListaPisos = new ArrayList<SpinnerObject>();
         mDataHelper.getPisosAsync();
-        mDataHelper.getArticuloPorFamiliaAsync(0);
+//        mDataHelper.getArticuloPorFamiliaAsync(0);
     }
     public void loadMesasObject(int nroPiso, int codAmbiente) {
         mListaObjectMesas=new ArrayList<MesaPisoObject>();
@@ -114,5 +115,6 @@ public class MesasActivity extends Activity implements
     @Override
     public void onItemClick(MesaItemAdapter.ItemHolder item, int position) {
         Toast.makeText(this, item.getNro(), Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this,CategoryActivity.class));
     }
 }
