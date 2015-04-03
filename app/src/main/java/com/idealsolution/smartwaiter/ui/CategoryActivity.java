@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.idealsolution.smartwaiter.R;
-import com.idealsolution.smartwaiter.events.MiEvento;
 import com.idealsolution.smartwaiter.events.OnArticuloCartaClickEvent;
 import com.idealsolution.smartwaiter.events.OnCategoriaClickEvent;
 import com.idealsolution.smartwaiter.model.ArticuloHelper;

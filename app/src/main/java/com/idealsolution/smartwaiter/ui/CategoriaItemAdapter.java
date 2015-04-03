@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.idealsolution.smartwaiter.R;
-import com.idealsolution.smartwaiter.events.MiEvento;
 import com.idealsolution.smartwaiter.events.OnCategoriaClickEvent;
 import com.idealsolution.smartwaiter.model.CategoriaObject;
 import com.koushikdutta.ion.Ion;
