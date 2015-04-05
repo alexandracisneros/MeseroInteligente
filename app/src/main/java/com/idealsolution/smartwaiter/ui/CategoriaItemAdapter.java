@@ -23,10 +23,11 @@ import de.greenrobot.event.EventBus;
  * Created by Usuario on 02/04/2015.
  */
 public class CategoriaItemAdapter extends RecyclerView.Adapter<CategoriaItemAdapter.ItemHolder> {
+
     private ArrayList<CategoriaObject> mItems;
     private LayoutInflater mLayoutInflater;
     private int mSize;
-    private View mSelectedView;
+    private int mSelectedPosition;
     //private Context mContext; // ALTERNATIVE TO EVENTBUS
 
     public CategoriaItemAdapter(Context context, ArrayList<CategoriaObject> categorias) {
@@ -34,7 +35,7 @@ public class CategoriaItemAdapter extends RecyclerView.Adapter<CategoriaItemAdap
         mItems = categorias;
         mSize = context.getResources()
                 .getDimensionPixelSize(R.dimen.icon);
-        mSelectedView = null;
+        mSelectedPosition = -1;
 //        mContext=context; // ALTERNATIVE TO EVENTBUS
 
     }
@@ -54,6 +55,14 @@ public class CategoriaItemAdapter extends RecyclerView.Adapter<CategoriaItemAdap
                 .centerCrop()
                 .error(R.drawable.owner_error)
                 .load(mItems.get(position).getUrl());
+
+        //Update the views as they got recycled
+        if (mSelectedPosition != position) {
+            holder.getPicImageView().setBackgroundColor(Color.TRANSPARENT);
+        } else {
+            holder.getPicImageView().setBackgroundColor(Color.CYAN);
+        }
+
     }
 
     //Inicio-ALTERNATIVE TO EVENTBUS
@@ -68,18 +77,16 @@ public class CategoriaItemAdapter extends RecyclerView.Adapter<CategoriaItemAdap
     public int getItemCount() {
         return mItems.size();
     }
-    /* To highlight selected item*/
 
-    public View getSelectedView() {
-        return mSelectedView;
+    public int getSelectedPosition() {
+        return mSelectedPosition;
     }
 
-    public void setSelectedView(View selectedView) {
-        this.mSelectedView = selectedView;
+    public void setSelectedPosition(int mSelectedPosition) {
+        this.mSelectedPosition = mSelectedPosition;
     }
-
     /* Required implementation of ViewHolder to wrap item view */
-    public static class ItemHolder extends RecyclerView.ViewHolder implements
+    public class ItemHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
         private CategoriaItemAdapter mParent;
         private TextView mTituloTextView;
@@ -109,18 +116,23 @@ public class CategoriaItemAdapter extends RecyclerView.Adapter<CategoriaItemAdap
 
         @Override
         public void onClick(View v) {
-            EventBus.getDefault().post(new OnCategoriaClickEvent(this, getPosition()));
+            EventBus.getDefault().post(new OnCategoriaClickEvent(this, getAdapterPosition()));
             //((CategoryActivity)mParent.getContext()).loadArticulosObject(Integer.parseInt(mParent.getItems().get(getPosition()).getCodigo().trim())); //ALTERNATIVE TO EVENTBUS
             setItemActivated(v);
         }
 
         public void setItemActivated(View v) {
+            //getAdapterPosition: Returns the Adapter position of the item represented by this ViewHolder.
+            final int thisItemPos = getAdapterPosition();
+            if (thisItemPos == RecyclerView.NO_POSITION) {
 
-            if (mParent.getSelectedView() != null) {
-                mParent.getSelectedView().findViewById(R.id.picture_image_view).setBackgroundColor(Color.TRANSPARENT);
             }
-            v.findViewById(R.id.picture_image_view).setBackgroundColor(Color.CYAN);
-            mParent.setSelectedView(v);
+            final int prevSelected = mParent.getSelectedPosition();
+            mParent.setSelectedPosition(thisItemPos);
+            if (prevSelected >= 0 && prevSelected < mParent.getItemCount()) {
+                mParent.notifyItemChanged(prevSelected);
+            }
+            mParent.notifyItemChanged(thisItemPos);
         }
     }
 }

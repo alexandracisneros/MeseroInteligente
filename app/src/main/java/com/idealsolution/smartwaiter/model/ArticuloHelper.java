@@ -6,10 +6,8 @@ import android.os.AsyncTask;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Articulo;
 import com.idealsolution.smartwaiter.ui.ArticuloItemAdapter;
-import com.idealsolution.smartwaiter.ui.CategoriaItemAdapter;
 import com.idealsolution.smartwaiter.ui.CategoryActivity;
 
-import java.util.ArrayList;
 
 import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
 
@@ -50,8 +48,7 @@ public class ArticuloHelper {
                     mContext.getListaArticulos().add(item);
                 }
                 cursor.close();
-                mContext.setAdapterPlatos(new ArticuloItemAdapter(mContext, mContext.getListaArticulos()));
-//                mContext.getMesasAdapter().setOnItemClickListener(mContext);
+                mContext.setAdapterPlatos(new ArticuloItemAdapter(mContext,mContext.getListaArticulos()));
                 mContext.getRecyclerViewPlatos().setAdapter(mContext.getAdapterPlatos());
 
             }

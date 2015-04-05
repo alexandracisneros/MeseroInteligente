@@ -41,9 +41,6 @@ public class CategoryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
-//        mListaCategorias=getImageList(MyGalleryData.categories);
-//        mListaArticulos=new ArrayList<GalleryObject>();
-
         mRecyclerViewCateg = (RecyclerView) findViewById(R.id.categoria_recycler_view);
         mRecyclerViewCateg.setHasFixedSize(true);
 
@@ -56,8 +53,8 @@ public class CategoryActivity extends Activity {
         mRecyclerViewCateg.setLayoutManager(mCategHorizontalManager);
         mRecyclerViewPlatos.setLayoutManager(mPlatosHorizontalManager);
 
+
         loadCategoriasObject();
-        loadArticulosObject(0);
 
     }
 

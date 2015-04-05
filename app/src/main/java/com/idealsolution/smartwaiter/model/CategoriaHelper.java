@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Familia;
-import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Articulo;
 import com.idealsolution.smartwaiter.ui.CategoriaItemAdapter;
 import com.idealsolution.smartwaiter.ui.CategoryActivity;
 
@@ -44,9 +43,11 @@ public class CategoriaHelper {
                     mContext.getListaCategorias().add(item);
                 }
                 cursor.close();
-                mContext.setAdapterCateg(new CategoriaItemAdapter(mContext, mContext.getListaCategorias()));
-                //mContext.getAdapterCateg().setOnItemClickListener(mContext);
+                mContext.setAdapterCateg(new CategoriaItemAdapter(mContext,mContext.getListaCategorias()));
                 mContext.getRecyclerViewCateg().setAdapter(mContext.getAdapterCateg());
+                //By default load all the dishes under the first category
+                int familiaId=Integer.parseInt(mContext.getListaCategorias().get(0).getCodigo().trim());
+                mContext.loadArticulosObject(familiaId);
 
             }
         }.execute();
