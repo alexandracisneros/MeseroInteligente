@@ -1,8 +1,11 @@
 package com.idealsolution.smartwaiter.provider;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,10 +17,13 @@ import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.MesaPiso;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Familia;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Articulo;
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract.PedidoCabecera;
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract.PedidoDetalle;
 import com.idealsolution.smartwaiter.database.SmartWaiterDatabase;
 import com.idealsolution.smartwaiter.database.SmartWaiterDatabase.Tables;
 import com.idealsolution.smartwaiter.util.SelectionBuilder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.idealsolution.smartwaiter.util.LogUtils.LOGV;
@@ -55,7 +61,7 @@ public class SmartWaiterProvider extends ContentProvider {
 
     private static final int ARTICULOS = 800;
     private static final int ARTICULOS_ID = 801;
-    private static final int ARTICULOS_ID_FAMILIA=802;
+    private static final int ARTICULOS_ID_FAMILIA = 802;
     //endregion
 
     private static UriMatcher buildUriMatcher() {
@@ -179,7 +185,7 @@ public class SmartWaiterProvider extends ContentProvider {
             case MESA_PISOS_AMBIENTES: {
                 return builder.table(Tables.MESA_PISO);
             }
-            case ARTICULOS_ID_FAMILIA:{
+            case ARTICULOS_ID_FAMILIA: {
                 final String familiaId = Familia.getFamiliaId(uri);
                 return builder.table(Tables.ARTICULOS_JOIN_CARTA, familiaId)
                         .mapToTable(Articulo.ID, Tables.ARTICULO);
@@ -217,7 +223,25 @@ public class SmartWaiterProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        Log.d(SmartWaiterContract.TAG, "LLegue a INSERT del ContentProvider. URL:" + uri.toString());
+        long insertedRecordID;
+        Log.d(SmartWaiterContract.TAG, "LLegue a match=" + match);
+        switch (match) {
+            case PEDIDO_CABECERAS: {
+                insertedRecordID = mDB.insertOrThrow(Tables.PEDIDO_CABECERA, null, values);
+                //notifyChange(uri);
+                return PedidoCabecera.buildPedidoCabeceraUri(String.valueOf(insertedRecordID));
+            }
+            case PEDIDO_DETALLES: {
+                insertedRecordID = mDB.insertOrThrow(Tables.PEDIDO_DETALLE, null, values);
+                //notifyChange(uri);
+                return PedidoDetalle.buildPedidoDetalleUri(String.valueOf(insertedRecordID));
+            }
+            default: {
+                throw new UnsupportedOperationException("Unknown insert uri: " + uri);
+            }
+        }
     }
 
     @Override
@@ -265,6 +289,18 @@ public class SmartWaiterProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown insert uri: " + uri);
             }
         }
+    }
+
+
+    /**
+     * Apply the given set of {@link ContentProviderOperation}, executing inside
+     * a {link SQLiteDatabase} transaction. All changes will be rolled back if
+     * any single one fails.
+     */
+    @Override
+    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations)
+            throws OperationApplicationException {
+        return mDB.applyBatch(this, operations);
     }
 
     /**

@@ -34,21 +34,24 @@ public class SmartWaiterContract {
          String TIPO_PAGO  = "tipo_pago";
          int TIPO_PAGO_COL = 7;
 
-         String MONTO_TOTAL  = "monto_total";
-         int MONTO_TOTAL_COL = 8;
+        String MONEDA="moneda";
+        int MONEDA_COL=8;
 
-         String MONTO_RECIBIDO  = "moneda";
-         int MONTO_RECIBIDO_COL = 9;
+         String MONTO_TOTAL  = "monto_total";
+         int MONTO_TOTAL_COL = 9;
+
+         String MONTO_RECIBIDO  = "moneda_recibido";
+         int MONTO_RECIBIDO_COL = 10;
 
          String ESTADO  = "estado";
-         int ESTADO_COL = 10;
+         int ESTADO_COL = 11;
     }
     interface  PedidoDetalleColumns{
          String ID  = "_id";
          int ID_COL = 0;
 
-         String ITEM  = "item";
-         int ITEM_COL = 1;
+         String PEDIDO_ID  = "pedido_id";
+         int PEDIDO_ID_COL = 1;
 
          String COD_ART  = "cod_articulo";
          int COD_ART_COL = 2;
@@ -206,6 +209,10 @@ public class SmartWaiterContract {
                 "vnd.android.cursor.dir/vnd.idealsolution.pedido_cabecera";
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.idealsolution.pedido_cabecera";
+        /** Build {@link Uri} for requested {link PedidoCabecera.ID}. */
+        public static Uri buildPedidoCabeceraUri(String id) {
+            return CONTENT_URI.buildUpon().appendPath(id).build();
+        }
     }
     public static class PedidoDetalle implements PedidoDetalleColumns{
         public static final Uri CONTENT_URI=
@@ -214,6 +221,10 @@ public class SmartWaiterContract {
                 "vnd.android.cursor.dir/vnd.idealsolution.pedido_detalle";
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.idealsolution.pedido_detalle";
+        /** Build {@link Uri} for requested {link PedidoDetalle.ID}. */
+        public static Uri buildPedidoDetalleUri(String id) {
+            return CONTENT_URI.buildUpon().appendPath(id).build();
+        }
 
     }
     public static class Familia implements FamiliaColumns{

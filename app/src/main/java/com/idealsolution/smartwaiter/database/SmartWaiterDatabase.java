@@ -1,11 +1,15 @@
 package com.idealsolution.smartwaiter.database;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.*;
+import com.idealsolution.smartwaiter.provider.SmartWaiterProvider;
 
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -13,6 +17,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Locale;
 
 
@@ -45,6 +50,9 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
     public void openDatabase(boolean writable) {
         db= writable ? getWritableDatabase() : getReadableDatabase();
     }
+
+
+
     public interface Tables {
         static final String PEDIDO_CABECERA="pedido_cabecera";
         static final String PEDIDO_DETALLE="pedido_detalle";
@@ -68,26 +76,27 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
                 + PedidoCabecera.FECHA			+ " TEXT NOT NULL,"
                 + PedidoCabecera.NRO_MESA 		+ " INTEGER NOT NULL,"
                 + PedidoCabecera.AMBIENTE 		+ " INTEGER NOT NULL,"
-                + PedidoCabecera.CODIGO_USUARIO + " TEXT,"
+                + PedidoCabecera.CODIGO_USUARIO + " TEXT NOT NULL,"
                 + PedidoCabecera.CODIGO_CLIENTE	+ " INTEGER,"
                 + PedidoCabecera.TIPO_VENTA		+ " TEXT,"
                 + PedidoCabecera.TIPO_PAGO 		+ " TEXT,"
-                + PedidoCabecera.MONTO_TOTAL  	+ " REAL,"
+                + PedidoCabecera.MONEDA         + " TEXT,"
+                + PedidoCabecera.MONTO_TOTAL  	+ " REAL NOT NULL,"
                 + PedidoCabecera.MONTO_RECIBIDO + " REAL,"
-                + PedidoCabecera.ESTADO  		+ " INTEGER"
+                + PedidoCabecera.ESTADO  		+ " INTEGER NOT NULL"
                 + " )"
         );
         db.execSQL("CREATE TABLE "
                 + Tables.PEDIDO_DETALLE + " ("
                 + PedidoDetalle.ID				    + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + PedidoDetalle.ITEM			    + " INTEGER NOT NULL,"
+                + PedidoDetalle.PEDIDO_ID   	    + " INTEGER NOT NULL,"
                 + PedidoDetalle.COD_ART	            + " INTEGER NOT NULL,"
                 + PedidoDetalle.CANTIDAD   	        + " REAL NOT NULL,"
-                + PedidoDetalle.PRECIO              + " REAL,"
-                + PedidoDetalle.TIPO_ART    	    + " INTEGER,"
+                + PedidoDetalle.PRECIO              + " REAL NOT NULL,"
+                + PedidoDetalle.TIPO_ART    	    + " INTEGER NOT NULL,"
                 + PedidoDetalle.COD_ART_PRINCIPAL   + " INTEGER,"
                 + PedidoDetalle.COMENTARIO          + " TEXT,"
-                + PedidoDetalle.ESTADO_ART          + " INTEGER"
+                + PedidoDetalle.ESTADO_ART          + " INTEGER NOT NULL"
                 + " )"
         );
         db.execSQL("CREATE TABLE "
@@ -351,7 +360,25 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
         return numInserted;
     }
     //endregion
-
+    public ContentProviderResult[] applyBatch(SmartWaiterProvider context,ArrayList<ContentProviderOperation> operations)
+            throws OperationApplicationException {
+        this.openDatabase(true);
+        db.beginTransaction();
+        try {
+            final int numOperations = operations.size();
+            final ContentProviderResult[] results = new ContentProviderResult[numOperations];
+            for (int i = 0; i < numOperations; i++) {
+                results[i] = operations.get(i).apply(context, results, i);
+            }
+            db.setTransactionSuccessful();
+            return results;
+        } finally {
+            db.endTransaction();
+        }
+    }
+    public long insertOrThrow(String table,  String nullColumnHack, ContentValues values) {
+            return db.insertOrThrow(table,nullColumnHack,values);
+    }
 
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
