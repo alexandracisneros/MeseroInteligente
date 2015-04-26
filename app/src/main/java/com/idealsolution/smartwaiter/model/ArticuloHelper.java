@@ -13,7 +13,8 @@ import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Articulo;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.PedidoCabecera;
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.PedidoDetalle;
 import com.idealsolution.smartwaiter.ui.ArticuloItemAdapter;
-import com.idealsolution.smartwaiter.ui.CategoryActivity;
+import com.idealsolution.smartwaiter.ui.CategoryDishFragment;
+import com.idealsolution.smartwaiter.ui.TakeOrderActivity;
 
 
 import java.util.ArrayList;
@@ -25,13 +26,13 @@ import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
  */
 public class ArticuloHelper {
     private static final String TAG = makeLogTag(CategoriaHelper.class);
-    private CategoryActivity mContext;
+    private TakeOrderActivity mContext;
 
-    public ArticuloHelper(CategoryActivity context) {
+    public ArticuloHelper(TakeOrderActivity context) {
         this.mContext = context;
     }
 
-    public void getArticuloPorFamiliaAsync(final int familiaId) {
+    public void getArticuloPorFamiliaAsync(final CategoryDishFragment fragment,final int familiaId) {
 
         new AsyncTask<Void, Void, Cursor>() {
             @Override
@@ -55,11 +56,11 @@ public class ArticuloHelper {
                     item.setPrecio(cursor.getFloat(ArticulosQuery.PRECIO));
                     item.setUrl(cursor.getString(ArticulosQuery.URL));
 
-                    mContext.getListaArticulos().add(item);
+                    fragment.getListaArticulos().add(item);
                 }
                 cursor.close();
-                mContext.setAdapterPlatos(new ArticuloItemAdapter(mContext, mContext.getListaArticulos()));
-                mContext.getRecyclerViewPlatos().setAdapter(mContext.getAdapterPlatos());
+                fragment.setAdapterPlatos(new ArticuloItemAdapter(mContext, fragment.getListaArticulos()));
+                fragment.getRecyclerViewPlatos().setAdapter(fragment.getAdapterPlatos());
 
             }
         }.execute();

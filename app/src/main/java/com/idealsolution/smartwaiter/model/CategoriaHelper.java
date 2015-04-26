@@ -6,20 +6,21 @@ import android.os.AsyncTask;
 
 import com.idealsolution.smartwaiter.contract.SmartWaiterContract.Familia;
 import com.idealsolution.smartwaiter.ui.CategoriaItemAdapter;
-import com.idealsolution.smartwaiter.ui.CategoryActivity;
+import com.idealsolution.smartwaiter.ui.CategoryDishFragment;
+import com.idealsolution.smartwaiter.ui.TakeOrderActivity;
 
 
 import static com.idealsolution.smartwaiter.util.LogUtils.makeLogTag;
 
 public class CategoriaHelper {
     private static final String TAG = makeLogTag(CategoriaHelper.class);
-    private CategoryActivity mContext;
+    private TakeOrderActivity mContext;
 
-    public CategoriaHelper(CategoryActivity context) {
+    public CategoriaHelper(TakeOrderActivity context) {
         this.mContext = context;
     }
 
-    public void getCategoriasAsync() {
+    public void getCategoriasAsync(final CategoryDishFragment fragment) {
 
         new AsyncTask<Void, Void, Cursor>() {
             @Override
@@ -40,14 +41,14 @@ public class CategoriaHelper {
                     item.setCodigo(cursor.getString(CategoriasQuery.CODIGO));
                     item.setDescripcion(cursor.getString(CategoriasQuery.DESCRIPCION));
                     item.setUrl(cursor.getString(CategoriasQuery.URL));
-                    mContext.getListaCategorias().add(item);
+                    fragment.getListaCategorias().add(item);
                 }
                 cursor.close();
-                mContext.setAdapterCateg(new CategoriaItemAdapter(mContext,mContext.getListaCategorias()));
-                mContext.getRecyclerViewCateg().setAdapter(mContext.getAdapterCateg());
+                fragment.setAdapterCateg(new CategoriaItemAdapter(mContext,fragment.getListaCategorias()));
+                fragment.getRecyclerViewCateg().setAdapter(fragment.getAdapterCateg());
                 //By default load all the dishes under the first category
-                int familiaId=Integer.parseInt(mContext.getListaCategorias().get(0).getCodigo().trim());
-                mContext.loadArticulosObject(familiaId);
+                int familiaId=Integer.parseInt(fragment.getListaCategorias().get(0).getCodigo().trim());
+                fragment.loadArticulosObject(familiaId);
 
             }
         }.execute();

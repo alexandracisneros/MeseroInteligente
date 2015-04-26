@@ -116,7 +116,7 @@ public class CategoriaItemAdapter extends RecyclerView.Adapter<CategoriaItemAdap
 
         @Override
         public void onClick(View v) {
-            EventBus.getDefault().post(new OnCategoriaClickEvent(this, getAdapterPosition()));
+            EventBus.getDefault().post(new OnCategoriaClickEvent(this,mItems.get(getAdapterPosition()), getAdapterPosition()));
             //((CategoryActivity)mParent.getContext()).loadArticulosObject(Integer.parseInt(mParent.getItems().get(getPosition()).getCodigo().trim())); //ALTERNATIVE TO EVENTBUS
             setItemActivated(v);
         }

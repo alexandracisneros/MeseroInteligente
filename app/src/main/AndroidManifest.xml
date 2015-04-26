@@ -42,9 +42,12 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name=".ui.CategoryActivity"
-            android:label="@string/title_activity_category" >
+        <activity android:name=".ui.TakeOrderActivity"
+            android:label="@string/take_order_title">
+
+        </activity>
+        <activity android:name=".ui.OrderDetailsActivity"
+            android:label="@string/order_details_title">
 
         </activity>
     </application>

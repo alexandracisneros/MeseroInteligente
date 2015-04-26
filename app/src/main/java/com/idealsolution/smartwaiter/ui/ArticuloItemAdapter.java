@@ -105,7 +105,7 @@ public class ArticuloItemAdapter extends RecyclerView.Adapter<ArticuloItemAdapte
 
         @Override
         public void onClick(View v) {
-            EventBus.getDefault().post(new OnArticuloCartaClickEvent(this, getAdapterPosition()));
+            EventBus.getDefault().post(new OnArticuloCartaClickEvent(this,mItems.get(getAdapterPosition()), getAdapterPosition()));
             setItemActivated(v);
 
         }

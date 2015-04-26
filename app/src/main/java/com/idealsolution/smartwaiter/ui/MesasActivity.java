@@ -115,6 +115,6 @@ public class MesasActivity extends Activity implements
     @Override
     public void onItemClick(MesaItemAdapter.ItemHolder item, int position) {
         Toast.makeText(this, item.getNro(), Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this,CategoryActivity.class));
+        startActivity(new Intent(this,TakeOrderActivity.class));
     }
 }

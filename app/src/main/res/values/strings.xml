@@ -17,5 +17,7 @@
     <string name="sync_notify_title_error">Error en sincronización</string>
     <string name="title_activity_combos">CombosActivity</string>
     <string name="title_activity_category">Categories</string>
+    <string name="take_order_title">Take Order</string>
+    <string name="order_details_title">Order Details</string>
     <!-- Sincronizacion Receiver -->
 </resources>
