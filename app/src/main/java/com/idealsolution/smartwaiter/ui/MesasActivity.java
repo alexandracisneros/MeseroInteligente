@@ -17,7 +17,7 @@ import com.idealsolution.smartwaiter.util.InsetDecoration;
 
 import java.util.ArrayList;
 
-public class MesasActivity extends Activity implements
+public class MesasActivity extends BaseActivity implements
         MesaItemAdapter.OnItemClickListener{
     private Spinner mPisosSpinner;
     private Spinner mAmbienteSpinner;
@@ -78,8 +78,8 @@ public class MesasActivity extends Activity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mesas);
+        super.onCreate(savedInstanceState,R.layout.opcion_selec_mesa);
+        overridePendingTransition(0,0);
         mPisosSpinner = (Spinner) findViewById(R.id.pisos_spinner);
         mAmbienteSpinner = (Spinner) findViewById(R.id.ambientes_spinner);
 
@@ -95,6 +95,11 @@ public class MesasActivity extends Activity implements
         mRecylerView.setLayoutManager(mVerticalGridManager);
 
         loadPisosSpinner();
+    }
+
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return NAVDRAWER_ITEM_SELEC_MESA;
     }
 
     public void loadAmbienteSpinner(final int nroPiso) {

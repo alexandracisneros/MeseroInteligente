@@ -1,6 +1,5 @@
 package com.idealsolution.smartwaiter.ui;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,7 +22,7 @@ import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.service.SincronizarService;
 
 
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener{
     private Button mSincronizarButton;
     private RelativeLayout mSpinnerLayout;
     private RelativeLayout mSincronizarLayout;
@@ -32,8 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState, R.layout.opcion_sincronizar);
 
         // get references to widgets
         mSincronizarButton = (Button) findViewById(R.id.sincronizarButton);
@@ -45,8 +43,38 @@ public class MainActivity extends Activity implements View.OnClickListener{
         // set listeners
         mSincronizarButton.setOnClickListener(this);
 
+        overridePendingTransition(0,0);
+
     }
 
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return NAVDRAWER_ITEM_SINCRONIZAR;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        //Create the ActionBar actions
+        getMenuInflater().inflate(R.menu.menu_sincronizar,menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                //Add Action
+                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_share:
+                //Share Action
+                Toast.makeText(this,"Share",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
     @Override
     public void onClick(View v) {
         // here get SharedPreferences and send them with the Intent

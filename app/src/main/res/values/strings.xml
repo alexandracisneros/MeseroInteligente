@@ -19,5 +19,19 @@
     <string name="title_activity_category">Categories</string>
     <string name="take_order_title">Take Order</string>
     <string name="order_details_title">Order Details</string>
+    <string name="producto_pedido_label">Producto</string>
+    <string name="precio_pedido_label">Precio</string>
+    <string name="cantidad_pedido_label">Cantidad</string>
+    <string name="sub_total_pedido_label">SubTotal</string>
+    <string name="total_pedido_label">Total</string>
+    <string name="igv_pedido_label">IGV</string>
     <!-- Sincronizacion Receiver -->
+    <!--Drawer - Inicio-->
+    <string name="opcion_sincronizar">Sincronizar</string>
+    <string name="opcion_selec_mesa">Seleccionar Mesa</string>
+    <string name="opcion_tomar_pedido">Tomar Pedido</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_delete">Delete</string>
+    <!--Drawer - Fin-->
 </resources>

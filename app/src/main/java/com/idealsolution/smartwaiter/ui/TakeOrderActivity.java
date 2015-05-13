@@ -1,8 +1,10 @@
 package com.idealsolution.smartwaiter.ui;
 
-import android.app.Activity;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.idealsolution.smartwaiter.R;
@@ -15,14 +17,14 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Usuario on 20/04/2015.
  */
-public class TakeOrderActivity extends Activity {
+public class TakeOrderActivity extends BaseActivity {
         private CategoryDishFragment mCategDishesFragement=null;
         private OrderFragment mOrderFragment=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_take_order);
+        super.onCreate(savedInstanceState,R.layout.opcion_tomar_pedido);
+        overridePendingTransition(0,0);
 
         mCategDishesFragement= (CategoryDishFragment) getFragmentManager().findFragmentById(R.id.categ_dishes);
         if(mCategDishesFragement==null){
@@ -37,6 +39,33 @@ public class TakeOrderActivity extends Activity {
             getFragmentManager().beginTransaction()
                     .add(R.id.orders,mOrderFragment).commit();
         }
+    }
+    @Override
+    protected int getSelfNavDrawerItem() {
+        return NAVDRAWER_ITEM_TOMAR_PEDIDO;
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Create the ActionBar actions
+        getMenuInflater().inflate(R.menu.menu_tomar_pedido, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                //Delete Action
+                Toast.makeText(this,"Delete",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_settings:
+                //Settings Action
+                Toast.makeText(this,"Settings",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
     @Override
     protected void onResume() {
