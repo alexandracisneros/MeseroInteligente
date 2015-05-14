@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,8 +51,17 @@ public class BaseActivity extends Activity {
         mDrawerListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         String[] rows = getResources().getStringArray(R.array.drawer_rows);
+
+        //Our application uses Holo.Light, which defaults to
+        // light text; ListView also has a dark background.
+        // Create a custom context so the views inflated by
+        // ListAdapter use Holo.Light, to display them with dark text
+        ContextThemeWrapper wrapper =
+                new ContextThemeWrapper(this,
+                        android.R.style.Theme_Holo_Light);
+
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                this, R.layout.drawer_row, rows));
+                wrapper, R.layout.drawer_row, rows));
         mDrawerToggle =
                 new ActionBarDrawerToggle(
                         this,  //Host Activity
