@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.idealsolution.smartwaiter.R;
+import com.idealsolution.smartwaiter.model.PedidoDetObject;
+import com.idealsolution.smartwaiter.preference.PedidoSharedPreference;
+
+import java.util.ArrayList;
 
 /**
  * Created by Usuario on 20/04/2015.
  */
 public class OrderDetailsActivity extends Activity {
-    public static final String EXTRA_DESC="EXTRA_DESC";
-    private String desc=null;
     private OrderFragment ordersFrag=null;
+    private ArrayList<PedidoDetObject> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +27,12 @@ public class OrderDetailsActivity extends Activity {
                     .add(android.R.id.content,ordersFrag)
                     .commit();
         }
-        desc=getIntent().getStringExtra(EXTRA_DESC);
+        items= PedidoSharedPreference.getItems(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ordersFrag.loadDescripcion(desc);
+        ordersFrag.setOrderItems(items);
     }
 }

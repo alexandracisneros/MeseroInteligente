@@ -6,19 +6,26 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.idealsolution.smartwaiter.R;
 import com.idealsolution.smartwaiter.model.MesaPisoObject;
 import com.idealsolution.smartwaiter.model.MesaPisoHelper;
+import com.idealsolution.smartwaiter.model.PedidoCabObject;
 import com.idealsolution.smartwaiter.model.SpinnerObject;
 import com.idealsolution.smartwaiter.util.InsetDecoration;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MesasActivity extends BaseActivity implements
         MesaItemAdapter.OnItemClickListener{
+
+
+    public static final String EXTRA_MESA_SELECCIONADA="pedido_mesa_seleccionada";
     private Spinner mPisosSpinner;
     private Spinner mAmbienteSpinner;
 
@@ -120,6 +127,24 @@ public class MesasActivity extends BaseActivity implements
     @Override
     public void onItemClick(MesaItemAdapter.ItemHolder item, int position) {
         Toast.makeText(this, item.getNro(), Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this,TakeOrderActivity.class));
+        MesaPisoObject selectedTable=new MesaPisoObject();
+        SpinnerObject objPiso=getListaPisos().get(mPisosSpinner.getSelectedItemPosition());
+        SpinnerObject objAmbiente=geListaAmbientes().get(mAmbienteSpinner.getSelectedItemPosition());
+
+        Log.d(MesasActivity.class.toString(), "Ambiente.Codigo=" + objAmbiente.getCodigo() + " Ambiente.Descripcion=" + objAmbiente.getDescripcion());
+        Log.d(MesasActivity.class.toString(), "Nro Mesa=" + item.getNroMesa() + " Mesas = " + item.getNro().toString());
+
+        selectedTable.setNro_piso(objPiso.getCodigo());
+        selectedTable.setCod_ambiente(objAmbiente.getCodigo());
+        selectedTable.setNro_mesa(item.getNroMesa());
+        Gson gson = new Gson();
+        String mesaJSON = gson.toJson(selectedTable);
+
+        Intent intent = new Intent(this, TakeOrderActivity.class);
+        intent.putExtra(EXTRA_MESA_SELECCIONADA,mesaJSON);
+        //TakeOrderActivity.SavedPreferenceOrder(pedido, this);
+        Log.d(MesasActivity.class.toString(), mesaJSON);
+        startActivity(intent);
     }
+
 }

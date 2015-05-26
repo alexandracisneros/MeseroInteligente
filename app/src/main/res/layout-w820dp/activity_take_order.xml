@@ -8,11 +8,11 @@
         android:id="@+id/categ_dishes"
         android:layout_width="0px"
         android:layout_height="match_parent"
-        android:layout_weight="40"></FrameLayout>
+        android:layout_weight="55"></FrameLayout>
 
     <FrameLayout
         android:id="@+id/orders"
         android:layout_width="0px"
         android:layout_height="match_parent"
-        android:layout_weight="60"></FrameLayout>
+        android:layout_weight="45"></FrameLayout>
 </LinearLayout>

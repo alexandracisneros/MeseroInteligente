@@ -41,7 +41,8 @@ public class MesaItemAdapter  extends RecyclerView.Adapter<MesaItemAdapter.ItemH
 
     @Override
     public void onBindViewHolder(ItemHolder holder, int position) {
-        holder.setNro("Mesa #" + mItems.get(position).getNro_mesa() + "(" + mItems.get(position).getNro_asientos() + ")");
+        holder.setNroMesa(mItems.get(position).getNro_mesa());
+        holder.setNro("Mesa #" + holder.getNroMesa()+ "(" + mItems.get(position).getNro_asientos() + ")");
         holder.setEstado(mItems.get(position).getDesc_estado());
         holder.setReserva(String.valueOf(mItems.get(position).getCod_reserva()));
     }
@@ -64,6 +65,7 @@ public class MesaItemAdapter  extends RecyclerView.Adapter<MesaItemAdapter.ItemH
             View.OnClickListener{
         private MesaItemAdapter mParent;
         private TextView mNroTextView,mEstadoTextView,mReservaTextView;
+        private int mNroMesa;
         public ItemHolder(View itemView,MesaItemAdapter parent) {
             super(itemView);
             itemView.setOnClickListener(this);
@@ -72,6 +74,7 @@ public class MesaItemAdapter  extends RecyclerView.Adapter<MesaItemAdapter.ItemH
             mNroTextView= (TextView) itemView.findViewById(R.id.nro_textview);
             mEstadoTextView= (TextView) itemView.findViewById(R.id.estado_textview);
             mReservaTextView= (TextView) itemView.findViewById(R.id.reserva_textview);
+            mNroMesa=0;
 
         }
 
@@ -89,6 +92,14 @@ public class MesaItemAdapter  extends RecyclerView.Adapter<MesaItemAdapter.ItemH
 
         public CharSequence getNro() {
             return mNroTextView.getText();
+        }
+
+        public int getNroMesa() {
+            return mNroMesa;
+        }
+
+        public void setNroMesa(int mNroMesa) {
+            this.mNroMesa = mNroMesa;
         }
 
         @Override
