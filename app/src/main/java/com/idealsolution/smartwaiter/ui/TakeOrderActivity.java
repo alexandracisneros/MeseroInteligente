@@ -1,10 +1,8 @@
 package com.idealsolution.smartwaiter.ui;
 
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,7 +15,6 @@ import com.idealsolution.smartwaiter.events.OnArticuloCartaClickEvent;
 import com.idealsolution.smartwaiter.events.OnCategoriaClickEvent;
 import com.idealsolution.smartwaiter.model.ArticuloObject;
 import com.idealsolution.smartwaiter.model.MesaPisoObject;
-import com.idealsolution.smartwaiter.model.PedidoCabObject;
 import com.idealsolution.smartwaiter.model.PedidoDetObject;
 import com.idealsolution.smartwaiter.preference.PedidoSharedPreference;
 
@@ -135,19 +132,4 @@ public class TakeOrderActivity extends BaseActivity {
             startActivity(i);
         }
     }
-
-//    public static void SavedPreferenceOrder(PedidoCabObject pedido, Context context) {
-//        final SharedPreferences prefs = context.getSharedPreferences(
-//                PREFERENCES, context.MODE_PRIVATE);
-//        Editor editor = prefs.edit();
-//        if (pedido != null) {
-//            Gson gson = new Gson();
-//            String pedidoJson = gson.toJson(pedido);
-//            editor.putString(PREF_CURRENT_ORDER, pedidoJson);
-//        } else {
-//            editor.clear();
-//            editor.commit();
-//        }
-//        Log.d(TakeOrderActivity.class.toString(), "registro de preferencia pedido");
-//    }
 }

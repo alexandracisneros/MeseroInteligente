@@ -35,4 +35,5 @@ public class OrderDetailsActivity extends Activity {
         super.onResume();
         ordersFrag.setOrderItems(items);
     }
+
 }

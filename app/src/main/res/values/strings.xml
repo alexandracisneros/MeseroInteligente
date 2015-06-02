@@ -33,5 +33,8 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_delete">Delete</string>
+    <string name="action_save_send">Enviar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_cancelar_pedido">Cancelar</string>
     <!--Drawer - Fin-->
 </resources>
