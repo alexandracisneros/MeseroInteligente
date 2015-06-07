@@ -68,7 +68,7 @@
             style="@style/TextViewSmallContracted"
             android:layout_alignBaseline="@+id/subTotalPedidoLabel"
             android:layout_toRightOf="@+id/subTotalPedidoLabel"
-            android:text="@string/sub_total_pedido_label" />
+            />
         <TextView
             android:id="@+id/TotalPedidoLabel"
             style="@style/LabelContracted"
@@ -88,7 +88,6 @@
             style="@style/TextViewSmallContracted"
             android:paddingLeft="0dp"
             android:layout_marginLeft="0dp"
-            android:text="@string/igv_pedido_label"
             android:layout_alignBaseline="@+id/igvPedidoLabel"
             android:layout_below="@+id/subTotalPedidoTextView"
             android:layout_alignLeft="@+id/subTotalPedidoTextView"
@@ -98,7 +97,7 @@
             style="@style/TextViewSmallContracted"
             android:layout_alignBaseline="@+id/igvPedidoLabel"
             android:layout_alignParentRight="true"
-            android:text="@string/total_pedido_label" />
+            />
         <!--Segunda Fila-->
     </RelativeLayout>
 </RelativeLayout>

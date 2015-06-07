@@ -30,7 +30,7 @@ public class PedidoSharedPreference {
         String jsonItems = gson.toJson(items);
 
         editor.putString(PREF_PEDIDO_ACTUAL, jsonItems);
-
+        //editor.clear();//BORRAR
         editor.commit();
     }
 
@@ -38,7 +38,12 @@ public class PedidoSharedPreference {
         List<PedidoDetObject> items = getItems(context);
         if (items == null)
             items = new ArrayList<PedidoDetObject>();
-        items.add(item);
+        if (items.contains(item)) {  //This requires that the PedidoDetObject overrides the equals method
+            PedidoDetObject detalle=items.get(items.indexOf(item));
+            detalle.setCantidad(detalle.getCantidad() + 1);
+        } else {
+            items.add(item);
+        }
         saveItems(context, items);
     }
 

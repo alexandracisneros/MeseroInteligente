@@ -115,4 +115,14 @@ public class PedidoDetObject {
 //        detalleItem.setEstado_articulo(0); //No enviado a cocina
 //        return detalleItem;
 //    }
+
+    //This functions has been overriden so that I can use CONTAINS in the ArrayList of Details. See PedidoSharedPreference.addItem
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof PedidoDetObject) ) {
+            return false;
+        }
+        PedidoDetObject item = (PedidoDetObject)o;
+        return this.getCod_articulo()==item.getCod_articulo();
+    }
 }

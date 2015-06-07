@@ -47,7 +47,8 @@
 
         </activity>
         <activity android:name=".ui.OrderDetailsActivity"
-            android:label="@string/order_details_title">
+            android:label="@string/order_details_title"
+            android:uiOptions="splitActionBarWhenNarrow">
 
         </activity>
     </application>
