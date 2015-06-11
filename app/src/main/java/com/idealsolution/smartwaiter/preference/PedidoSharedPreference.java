@@ -46,21 +46,6 @@ public class PedidoSharedPreference {
         }
         saveItems(context, items);
     }
-    public static void updateItem(Context context, PedidoDetObject item) {
-        List<PedidoDetObject> items = getItems(context);
-        if (items == null)
-            items = new ArrayList<PedidoDetObject>();
-        if (items.contains(item)) {  //This requires that the PedidoDetObject overrides the equals method
-            if(item.getCantidad()>=1) {
-                PedidoDetObject detalle = items.get(items.indexOf(item));
-                detalle.setCantidad(item.getCantidad());
-            }
-            else{
-                items.remove(item);
-            }
-        }
-        saveItems(context, items);
-    }
 
     public static void removeItem(Context context, PedidoDetObject item) {
         ArrayList<PedidoDetObject> items = getItems(context);
