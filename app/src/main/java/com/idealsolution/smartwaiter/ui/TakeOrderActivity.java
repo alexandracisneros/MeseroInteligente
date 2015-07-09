@@ -4,7 +4,6 @@ package com.idealsolution.smartwaiter.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -53,6 +52,18 @@ public class TakeOrderActivity extends BaseActivity {
             mOrderFragment = new OrderFragment();
             getFragmentManager().beginTransaction()
                     .add(R.id.orders, mOrderFragment).commit();
+        }
+
+        //If order fragment is not null and the order placeholder is not visible
+        //then remove the fragment
+        if(mOrderFragment!=null && findViewById(R.id.orders)==null){
+            getFragmentManager().beginTransaction().remove(mOrderFragment).commit();
+        }
+        //If order placeholder is not visible and the AlertDialog Fragment is not null,
+        //then dismiss the dialog
+        EditarCantidadArticuloFragment alertDialogFragment = (EditarCantidadArticuloFragment) getFragmentManager().findFragmentByTag("EditarCantidadFragment");
+        if (findViewById(R.id.orders) == null && alertDialogFragment!=null) {
+            alertDialogFragment.dismiss();
         }
         String mesaJSON = getIntent().getStringExtra(MesasActivity.EXTRA_MESA_SELECCIONADA);
         Gson gson = new Gson();
@@ -125,6 +136,7 @@ public class TakeOrderActivity extends BaseActivity {
 //        String nombre = art.getDescripcionNorm();
         if (mOrderFragment != null && mOrderFragment.isVisible()) {
             items = PedidoSharedPreference.getItems(this);
+            //TODO add event bus to this activity too
             mOrderFragment.setOrderItems(items);
         } else {
             Intent i = new Intent(this, OrderDetailsActivity.class);

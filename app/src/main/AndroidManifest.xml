@@ -51,6 +51,8 @@
             android:uiOptions="splitActionBarWhenNarrow">
 
         </activity>
+        <service android:name=".service.AsyncQueryServiceHelper">
+        </service>
     </application>
 
 </manifest>

@@ -2,6 +2,10 @@ package com.idealsolution.smartwaiter.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -19,11 +23,15 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.idealsolution.smartwaiter.R;
+import com.idealsolution.smartwaiter.contract.SmartWaiterContract;
 import com.idealsolution.smartwaiter.events.OnEditarCantArticuloClickEvent;
+import com.idealsolution.smartwaiter.model.PedidoCabObject;
 import com.idealsolution.smartwaiter.model.PedidoDetObject;
 import com.idealsolution.smartwaiter.preference.PedidoSharedPreference;
+import com.idealsolution.smartwaiter.service.AsyncQueryService;
 
 
 import java.util.ArrayList;
@@ -44,10 +52,24 @@ public class OrderFragment extends Fragment {
     private ActionMode mActionMode;
     private int mSelectedItemsCount;
     private boolean mIsInActionMode = false;
+    private float mTotal=0;
+    private QueryHandler mHandler;
+    private class QueryHandler extends AsyncQueryService {
 
+        public QueryHandler(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onBatchComplete(int token, Object cookie, ContentProviderResult[] results) {
+            //super.onBatchComplete(token, cookie, results);
+            Toast.makeText(getActivity(),"Pedido Registrado Correctamente",Toast.LENGTH_LONG).show();
+        }
+
+    }
     public void setOrderItems(ArrayList<PedidoDetObject> items) {
         this.mItems = items;
-
+        showItems();
         //http://www.101apps.co.za/articles/using-menus-in-your-apps-a-tutorial.html
     }
 
@@ -90,24 +112,8 @@ public class OrderFragment extends Fragment {
         outState.putParcelable("ListViewState", mItemsPedidoListView.onSaveInstanceState());
         super.onSaveInstanceState(outState);
     }
-
-//    @Override
-//    public void onActivityCreated(Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        if (savedInstanceState != null) {
-//            Parcelable listViewState = savedInstanceState.getParcelable("ListViewState");
-//            mItemsPedidoListView.onRestoreInstanceState(listViewState);
-////            if(savedInstanceState.getBoolean("ActionMode",false)){
-////                mItemsPedidoListView.startActionMode(new ActionModeCallbacks());
-////                mSelectedItemsCount=savedInstanceState.getInt("SelectedItemsCount",0);
-////
-////            }
-//        }
-//    }
-
     private void showItems() {
         float subTotal = 0;
-        float total = 0;
         float igv = 0;
         //create a List of Map<String,?> objects
         ArrayList<HashMap<String, String>> data =
@@ -134,10 +140,10 @@ public class OrderFragment extends Fragment {
 
         //Calculate and display summary data
         igv = subTotal * 0.19f;
-        total = subTotal + igv;
+        mTotal = subTotal + igv;
         mSubTotalPedidoTextView.setText(String.valueOf(subTotal));
         mIGVPedidoTextView.setText(String.valueOf(igv));
-        mTotalPedidoTextView.setText(String.valueOf(total));
+        mTotalPedidoTextView.setText(String.valueOf(mTotal));
     }
 
     @Override
@@ -157,13 +163,23 @@ public class OrderFragment extends Fragment {
         inflater.inflate(R.menu.menu_pedido_actual, menu);
     }
 
-    //    @Override
-//    public void onPause() {
-////        if (mActionMode != null) {
-////            mActionMode.finish();
-////        }
-//        super.onPause();
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save_send:
+                Toast.makeText(getActivity(), "Save & Send", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_just_save:
+                saveOrder();
+                //Toast.makeText(getActivity(), "Just Save", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_cancelar:
+                Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
+    }
+
     //This method is called when a OnCategoriaClickEvent is posted
     public void onEventMainThread(OnEditarCantArticuloClickEvent event) {
         if (event.which == DialogInterface.BUTTON_POSITIVE) {
@@ -248,7 +264,7 @@ public class OrderFragment extends Fragment {
                 case R.id.menu_edit:
                     int position = checkedItemPositions.keyAt(0);
                     PedidoDetObject itemDetalle = mItems.get(position);
-                    EditarCantidadArticuloFragment.newInstance(itemDetalle).show(getFragmentManager(), "EditarCantidad");
+                    EditarCantidadArticuloFragment.newInstance(itemDetalle).show(getFragmentManager(), "EditarCantidadFragment");
                     return true;
                 case R.id.menu_add:
                     modifyProductQuantiy(0, checkedItemPositions);
@@ -274,5 +290,41 @@ public class OrderFragment extends Fragment {
             mode.setTitle(String.format("%d Selected", mSelectedItemsCount));
             mode.invalidate();
         }
+    }
+    private void saveOrder(){
+        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+        ContentValues cvPedido = new ContentValues();
+        //ContentValues cvDetalle;
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.FECHA, "20150708");
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.NRO_MESA, 2);
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.AMBIENTE, 1);
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.CODIGO_USUARIO, "200");
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.CODIGO_CLIENTE, 100);
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.TIPO_VENTA, "020");
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.TIPO_PAGO,"030");
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.MONEDA, "SOL");
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.MONTO_TOTAL, mTotal);
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.MONTO_RECIBIDO, 1500);
+        cvPedido.put(SmartWaiterContract.PedidoCabecera.ESTADO, 1);
+
+        operations.add(
+                ContentProviderOperation.newInsert(SmartWaiterContract.PedidoCabecera.CONTENT_URI)
+                        .withValues(cvPedido)
+                        .build());
+        for (PedidoDetObject det :mItems) {
+            operations.add(ContentProviderOperation.newInsert(SmartWaiterContract.PedidoDetalle.CONTENT_URI)
+                    .withValueBackReference(SmartWaiterContract.PedidoDetalle.PEDIDO_ID, 0) //This field references back the returned value of the first element
+                    .withValue(SmartWaiterContract.PedidoDetalle.COD_ART, det.getCod_articulo())
+                    .withValue(SmartWaiterContract.PedidoDetalle.CANTIDAD, det.getCantidad())
+                    .withValue(SmartWaiterContract.PedidoDetalle.PRECIO, det.getPrecio())
+                    .withValue(SmartWaiterContract.PedidoDetalle.TIPO_ART, det.getTipo_articulo())
+                    .withValue(SmartWaiterContract.PedidoDetalle.COD_ART_PRINCIPAL, det.getCod_art_principal())
+                    .withValue(SmartWaiterContract.PedidoDetalle.COMENTARIO, det.getComentario())
+                    .withValue(SmartWaiterContract.PedidoDetalle.ESTADO_ART, det.getEstado_articulo())
+                    .build());
+
+        }
+        mHandler = new QueryHandler(getActivity());
+        mHandler.startBatch(0, null, SmartWaiterContract.CONTENT_AUTHORITY, operations, 0);
     }
 }
