@@ -5,6 +5,7 @@
         <item>@string/opcion_sincronizar</item>
         <item>@string/opcion_selec_mesa</item>
         <item>@string/opcion_tomar_pedido</item>
+        <item>@string/opcion_listar_pedido</item>
     </string-array>
 
 </resources>

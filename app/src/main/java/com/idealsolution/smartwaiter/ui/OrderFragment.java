@@ -91,11 +91,14 @@ public class OrderFragment extends Fragment {
             }
         });
         mItemsPedidoListView.setMultiChoiceModeListener(new ActionModeCallbacks());
-        if (savedInstanceState == null) {
-            //http://stackoverflow.com/questions/11297210/after-orientation-change-optionsmenu-of-fragment-doesnt-disappear
-            setHasOptionsMenu(true);
-            mSelectedItemsCount = 0;
-        } else {
+//        if (savedInstanceState == null) {
+//            //http://stackoverflow.com/questions/11297210/after-orientation-change-optionsmenu-of-fragment-doesnt-disappear
+//            setHasOptionsMenu(true);
+//            mSelectedItemsCount = 0;
+//        } else {
+        setHasOptionsMenu(true);
+        mSelectedItemsCount = 0;
+        if(savedInstanceState!=null){
             Parcelable listViewState = savedInstanceState.getParcelable("ListViewState");
             mItemsPedidoListView.onRestoreInstanceState(listViewState);
             mSelectedItemsCount = savedInstanceState.getInt("SelectedItemsCount", 0);
@@ -160,6 +163,7 @@ public class OrderFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear(); //To show menu even if a rotate the screen
         inflater.inflate(R.menu.menu_pedido_actual, menu);
     }
 

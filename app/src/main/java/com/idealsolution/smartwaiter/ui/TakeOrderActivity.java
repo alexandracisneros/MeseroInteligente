@@ -139,8 +139,8 @@ public class TakeOrderActivity extends BaseActivity {
             //TODO add event bus to this activity too
             mOrderFragment.setOrderItems(items);
         } else {
-            Intent i = new Intent(this, OrderDetailsActivity.class);
-            //i.putExtra(OrderDetailsActivity.EXTRA_DESC, nombre);
+            Intent i = new Intent(this, OrderDetailActivity.class);
+            //i.putExtra(OrderDetailActivity.EXTRA_DESC, nombre);
             startActivity(i);
         }
     }

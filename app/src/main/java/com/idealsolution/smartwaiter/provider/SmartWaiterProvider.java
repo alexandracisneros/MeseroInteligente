@@ -173,6 +173,12 @@ public class SmartWaiterProvider extends ContentProvider {
     private SelectionBuilder buildExpandedSelection(Uri uri, int match) {
         final SelectionBuilder builder = new SelectionBuilder();
         switch (match) {
+            case PEDIDO_CABECERAS:{
+                return builder.table(Tables.PEDIDO_CABECERA);
+            }
+            case PEDIDO_DETALLES_ID:{
+                return builder.table(Tables.PEDIDO_DETALLE);
+            }
             case FAMILIAS: {
                 return builder.table(Tables.FAMILIA);
             }
@@ -201,6 +207,10 @@ public class SmartWaiterProvider extends ContentProvider {
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
+            case PEDIDO_CABECERAS:
+                return PedidoCabecera.CONTENT_TYPE;
+            case PEDIDO_DETALLES_ID:
+                return PedidoDetalle.CONTENT_ITEM_TYPE;
             case FAMILIAS:
                 return Familia.CONTENT_TYPE;
             //Mesa Piso - Inicio

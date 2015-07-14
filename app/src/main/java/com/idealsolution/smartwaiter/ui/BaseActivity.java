@@ -26,6 +26,7 @@ public class BaseActivity extends Activity {
     protected static final int NAVDRAWER_ITEM_SINCRONIZAR = 0;
     protected static final int NAVDRAWER_ITEM_SELEC_MESA = 1;
     protected static final int NAVDRAWER_ITEM_TOMAR_PEDIDO = 2;
+    protected static final int NAVDRAWER_ITEM_LISTAR_PEDIDO = 3;
 
 
     // Navigation mDrawerListView:
@@ -192,6 +193,12 @@ public class BaseActivity extends Activity {
             case NAVDRAWER_ITEM_TOMAR_PEDIDO:
                 intent = new Intent(this, TakeOrderActivity.class);
                 Log.d("Menu", "Tomar Pedido");
+                startActivity(intent);
+                finish();
+                break;
+            case NAVDRAWER_ITEM_LISTAR_PEDIDO:
+                intent=new Intent(this,OrderListActivity.class);
+                Log.d("Menu","Listar Pedidos");
                 startActivity(intent);
                 finish();
                 break;

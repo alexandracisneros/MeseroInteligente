@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by Usuario on 20/04/2015.
  */
-public class OrderDetailsActivity extends Activity {
+public class OrderDetailActivity extends Activity {
     private OrderFragment ordersFrag = null;
     private ArrayList<PedidoDetObject> items;
 
