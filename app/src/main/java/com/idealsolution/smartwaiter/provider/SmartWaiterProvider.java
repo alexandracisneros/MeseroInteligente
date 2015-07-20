@@ -255,8 +255,23 @@ public class SmartWaiterProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+    public int delete(Uri uri, String where, String[] whereArgs) {
+       int deleteCount;
+        final int match=sUriMatcher.match(uri);
+        switch (match){
+            case PEDIDO_DETALLES:
+                deleteCount=mDB.delete(Tables.PEDIDO_DETALLE,where,whereArgs);
+                getContext().getContentResolver().notifyChange(uri,null);
+
+                return deleteCount;
+            case PEDIDO_CABECERAS:
+                deleteCount=mDB.delete(Tables.PEDIDO_CABECERA,where,whereArgs);
+                getContext().getContentResolver().notifyChange(uri,null);
+
+                return  deleteCount;
+            default:
+                throw  new UnsupportedOperationException("Unknown delete uri: " + uri);
+        }
     }
 
     @Override
@@ -265,6 +280,7 @@ public class SmartWaiterProvider extends ContentProvider {
     }
 
     @Override
+    //TODO Correct this part. You don't have to have method for each insert operation. Take a look to the insert in the IO 2014
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final int match = sUriMatcher.match(uri);
         Log.d(SmartWaiterContract.TAG, "LLegue a bulkInsert del ContentProvider. URL:" + uri.toString());

@@ -379,6 +379,9 @@ public class SmartWaiterDatabase extends SQLiteOpenHelper {
     public long insertOrThrow(String table,  String nullColumnHack, ContentValues values) {
             return db.insertOrThrow(table,nullColumnHack,values);
     }
+    public int delete(String table,  String whereClause, String[] whereArgs){
+        return db.delete(table,whereClause,whereArgs);
+    }
 
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
