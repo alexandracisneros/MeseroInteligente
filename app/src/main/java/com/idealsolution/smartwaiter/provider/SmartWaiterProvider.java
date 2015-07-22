@@ -176,7 +176,7 @@ public class SmartWaiterProvider extends ContentProvider {
             case PEDIDO_CABECERAS:{
                 return builder.table(Tables.PEDIDO_CABECERA);
             }
-            case PEDIDO_DETALLES_ID:{
+            case PEDIDO_DETALLES:{
                 return builder.table(Tables.PEDIDO_DETALLE);
             }
             case FAMILIAS: {
@@ -209,6 +209,8 @@ public class SmartWaiterProvider extends ContentProvider {
         switch (match) {
             case PEDIDO_CABECERAS:
                 return PedidoCabecera.CONTENT_TYPE;
+            case PEDIDO_DETALLES:
+                return PedidoDetalle.CONTENT_TYPE;
             case PEDIDO_DETALLES_ID:
                 return PedidoDetalle.CONTENT_ITEM_TYPE;
             case FAMILIAS:
@@ -255,23 +257,31 @@ public class SmartWaiterProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String where, String[] whereArgs) {
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
        int deleteCount;
         final int match=sUriMatcher.match(uri);
         switch (match){
-            case PEDIDO_DETALLES:
-                deleteCount=mDB.delete(Tables.PEDIDO_DETALLE,where,whereArgs);
-                getContext().getContentResolver().notifyChange(uri,null);
-
-                return deleteCount;
             case PEDIDO_CABECERAS:
-                deleteCount=mDB.delete(Tables.PEDIDO_CABECERA,where,whereArgs);
-                getContext().getContentResolver().notifyChange(uri,null);
-
-                return  deleteCount;
+                deleteCount=mDB.delete(Tables.PEDIDO_CABECERA,selection,selectionArgs);
+                break;
+            case PEDIDO_DETALLES:
+                deleteCount=mDB.delete(Tables.PEDIDO_DETALLE,selection,selectionArgs);
+                break;
+            case PEDIDO_DETALLES_ID:
+                String detalleID = uri.getLastPathSegment();
+                String where = PedidoDetalle.ID + " = " + detalleID;
+                if(!TextUtils.isEmpty(selection)){
+                    where +=" AND " + selection;
+                }
+                deleteCount=mDB.delete(Tables.PEDIDO_DETALLE,where,selectionArgs);
+                break;
             default:
                 throw  new UnsupportedOperationException("Unknown delete uri: " + uri);
         }
+        if(deleteCount>0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return  deleteCount;
     }
 
     @Override

@@ -125,7 +125,7 @@ public class TakeOrderActivity extends BaseActivity {
     public void onEventMainThread(OnArticuloCartaClickEvent event) {
         String descripcion = event.artObj.getDescripcionNorm();
         Toast.makeText(this, descripcion, Toast.LENGTH_SHORT).show();
-        mCategDishesFragement.insertPedidoBatch();
+        //mCategDishesFragement.insertPedidoBatch();
         onActiculoSelected(event.artObj);
     }
 

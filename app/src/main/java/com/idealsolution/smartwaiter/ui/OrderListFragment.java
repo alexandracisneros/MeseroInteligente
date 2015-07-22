@@ -94,7 +94,7 @@ public class OrderListFragment extends Fragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), SmartWaiterContract.PedidoCabecera.CONTENT_URI,
+        return new CursorLoader(getActivity(), PedidoCabecera.CONTENT_URI,
                 PEDIDO_CABECERA_PROJECTION, null, null,null);
     }
 

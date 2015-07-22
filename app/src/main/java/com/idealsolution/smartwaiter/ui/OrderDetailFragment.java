@@ -2,11 +2,11 @@ package com.idealsolution.smartwaiter.ui;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.ContentProviderResult;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +26,7 @@ import com.idealsolution.smartwaiter.service.AsyncQueryService;
  */
 //http://www.grokkingandroid.com/using-loaders-in-android/
 public class OrderDetailFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> , AdapterView.OnItemLongClickListener{
+        LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemLongClickListener {
     private static final int DETALLE_PEDIDO_LOADER_ID = 0;
     private static final int TOKEN_DETALLE_ID = 0;
     private static final String IMPORTE_UNIT = "importe_unit";
@@ -45,27 +45,6 @@ public class OrderDetailFragment extends Fragment implements
     private ListView mItemsDetalleListView;
     private SimpleCursorAdapter mAdapter;
     private QueryHandler mHandler;
-    private class QueryHandler extends AsyncQueryService {
-
-        public QueryHandler(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected void onDeleteComplete(int token, Object cookie, int result) {
-            switch (token){
-                case TOKEN_DETALLE_ID:
-                    if (result <= 0) { // result=number of records affected
-                        Toast.makeText(getActivity(), "Delete operation failed.",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Delete operation successful",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -99,7 +78,7 @@ public class OrderDetailFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         int selectedOrderID = args.getInt("selectedOrderID");
-        return new CursorLoader(getActivity(), PedidoDetalle.buildPedidoDetalleUri(String.valueOf(selectedOrderID)),
+        return new CursorLoader(getActivity(), PedidoDetalle.CONTENT_URI,
                 PEDIDO_DETALLE_PROJECTION, PedidoDetalle.PEDIDO_ID + "= ? ", new String[]{String.valueOf(selectedOrderID)}, null);
     }
 
@@ -138,14 +117,36 @@ public class OrderDetailFragment extends Fragment implements
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Cursor c= ((SimpleCursorAdapter)parent.getAdapter()).getCursor();
+        Cursor c = ((SimpleCursorAdapter) parent.getAdapter()).getCursor();
         c.moveToPosition(position);
-        int i=c.getColumnIndex(PedidoDetalle.ID);
-        String detalleID=c.getString(i);
-        String where="_id= ?";
-        String[] whereArgs={detalleID};
+        int i = c.getColumnIndex(PedidoDetalle.ID);
+        String detalleID = c.getString(i);
 
-        mHandler.startDelete(TOKEN_DETALLE_ID,null,PedidoDetalle.CONTENT_URI,where,whereArgs,0);
-                return true;
+        // Uri detalleUri= ContentUris.withAppendedId(PedidoDetalle.CONTENT_URI, Long.parseLong(detalleID));
+        Uri detalleUri = PedidoDetalle.buildPedidoDetalleUri(detalleID);
+        mHandler.startDelete(TOKEN_DETALLE_ID, null, detalleUri, null, null, 0);
+        return true;
+    }
+
+    private class QueryHandler extends AsyncQueryService {
+
+        public QueryHandler(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onDeleteComplete(int token, Object cookie, int result) {
+            switch (token) {
+                case TOKEN_DETALLE_ID:
+                    if (result <= 0) { // result=number of records affected
+                        Toast.makeText(getActivity(), "Delete operation failed.",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Delete operation successful",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
     }
 }
